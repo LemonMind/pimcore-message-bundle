@@ -1,0 +1,5 @@
+lemon_mind_message:
+    resource: "@LemonMindMessageBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
