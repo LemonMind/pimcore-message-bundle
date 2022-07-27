@@ -7,20 +7,21 @@ namespace LemonMind\MessageBundle\Controller;
 use LemonMind\MessageBundle\Model\SlackMessageModel;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Notifier\ChatterInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Notifier\Exception\TransportExceptionInterface;
 
 /**
- * @Route("/admin/slack")
+ * @Route("/admin/chatter")
  */
-class SlackController extends AdminController
+class ChatterController extends AdminController
 {
     /**
      * @Route("/send-notification/{id}", requirements={"id"="\d+"}))
      */
-    public function indexAction(int $id, ChatterInterface $chatter, ContainerInterface $container): Response
+    public function indexAction(Request $request, int $id, ChatterInterface $chatter, ContainerInterface $container): Response
     {
         \Pimcore::unsetAdminMode();
 
