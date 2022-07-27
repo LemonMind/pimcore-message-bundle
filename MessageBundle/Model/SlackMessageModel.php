@@ -2,6 +2,7 @@
 
 namespace LemonMind\MessageBundle\Model;
 
+use Symfony\Component\Notifier\Bridge\Slack\Block\SlackContextBlock;
 use Symfony\Component\Notifier\Bridge\Slack\Block\SlackDividerBlock;
 use Symfony\Component\Notifier\Bridge\Slack\Block\SlackHeaderBlock;
 use Symfony\Component\Notifier\Bridge\Slack\Block\SlackSectionBlock;
@@ -14,11 +15,13 @@ class SlackMessageModel
 
     private object $product;
     private array $fields;
+    private string $additionalInfo;
 
-    public function __construct(object $product, array $fields)
+    public function __construct(object $product, array $fields, string $additionalInfo)
     {
         $this->product = $product;
         $this->fields = $fields;
+        $this->additionalInfo = $additionalInfo;
     }
 
     public function create(): ChatMessage
@@ -52,6 +55,11 @@ class SlackMessageModel
             $options->block(($infoBlock));
         }
         $options->block(new SlackDividerBlock());
+
+        if ($this->additionalInfo !== '') {
+            $options->block((new SlackContextBlock())->text($this->additionalInfo));
+            $options->block(new SlackDividerBlock());
+        }
 
         $chatMessage->options($options);
         $chatMessage->transport('slack');
