@@ -9,10 +9,6 @@ pimcore.plugin.LemonMindMessageBundle = Class.create(pimcore.plugin.admin, {
         pimcore.plugin.broker.registerPlugin(this);
     },
 
-    pimcoreReady: function (params, broker) {
-        //alert("LemonMindMessageBundle ready!");
-    },
-
     postOpenObject: function (object, type) {
 
         if (object.data.general.o_className === 'Car') {
@@ -21,8 +17,18 @@ pimcore.plugin.LemonMindMessageBundle = Class.create(pimcore.plugin.admin, {
                 iconCls: 'pimcore_icon_comments',
                 scale: 'small',
                 handler: function (obj) {
-                    window.open("http://localhost/lemonmind_message/" + object.id, '_blank');
-                    //window.location.href = "http://localhost/lemon_mind_message/" + object.id;
+                    Ext.Ajax.request({
+                        url: '/admin/slack/send-notification/' + obj.id,
+                        success: function (response) {
+                            let data = Ext.decode(response.responseText);
+                            if (data.success) {
+                                pimcore.helpers.showNotification(t("success"), t("Message sent"), "success");
+                            } else {
+                                pimcore.helpers.showNotification(t("error"), t("Error when sending message"), "error");
+                            }
+                        }
+                    });
+
                 }.bind(this, object)
             });
             pimcore.layout.refresh();
@@ -30,4 +36,4 @@ pimcore.plugin.LemonMindMessageBundle = Class.create(pimcore.plugin.admin, {
     },
 });
 
-var LemonMindMessageBundlePlugin = new pimcore.plugin.LemonMindMessageBundle();
+let LemonMindMessageBundlePlugin = new pimcore.plugin.LemonMindMessageBundle();

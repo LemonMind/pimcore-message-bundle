@@ -10,6 +10,8 @@ use Symfony\Component\Notifier\Message\ChatMessage;
 
 class SlackMessageModel
 {
+    private const MAX_FIELDS = 5;
+
     private object $product;
     private array $fields;
 
@@ -28,26 +30,32 @@ class SlackMessageModel
             ->block(new SlackDividerBlock());
 
         $infoBlock = new SlackSectionBlock();
-        $MAX_FIELDS = 5;
         $current = 0;
+
         foreach ($this->fields as $field) {
+            if (null === $this->product->get($field)) {
+                continue;
+            }
+
             $infoBlock->field("*$field*");
             $infoBlock->field($this->product->get($field));
             $current++;
-            if ($current == $MAX_FIELDS) {
+            if ($current === self::MAX_FIELDS) {
                 $options->block(($infoBlock));
                 $infoBlock = new SlackSectionBlock();
                 $current = 0;
             }
 
         }
-        if ($current != 0 && $current < $MAX_FIELDS) {
+
+        if ($current !== 0 && $current < self::MAX_FIELDS) {
             $options->block(($infoBlock));
         }
         $options->block(new SlackDividerBlock());
 
         $chatMessage->options($options);
         $chatMessage->transport('slack');
+
         return $chatMessage;
     }
 
