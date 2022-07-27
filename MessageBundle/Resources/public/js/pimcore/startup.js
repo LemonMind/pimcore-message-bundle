@@ -85,13 +85,12 @@ pimcore.plugin.LemonMindMessageBundle = Class.create(pimcore.plugin.admin, {
                                         if (form.isValid()) {
                                             form.submit({
                                                 success: function (form, action) {
-                                                    let data = Ext.decode(action.response.responseText);
                                                     modal.hide();
-                                                    if (data.success) {
-                                                        pimcore.helpers.showNotification(t("success"), t("Message sent"), "success");
-                                                    } else {
-                                                        pimcore.helpers.showNotification(t("error"), t("Error when sending message"), "error");
-                                                    }
+                                                    pimcore.helpers.showNotification(t("success"), t("Message sent"), "success");
+                                                },
+                                                failure: function (form, action) {
+                                                    modal.hide();
+                                                    pimcore.helpers.showNotification(t("error"), t("Error when sending message"), "error");
                                                 },
                                             });
                                         }
