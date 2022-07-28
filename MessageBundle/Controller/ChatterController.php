@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace LemonMind\MessageBundle\Controller;
 
+use LemonMind\MessageBundle\Model\EmailMessageModel;
 use LemonMind\MessageBundle\Model\SlackMessageModel;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Mail;
 use Pimcore\Model\DataObject\AbstractObject;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -49,12 +51,14 @@ class ChatterController extends AdminController
                     $this->googlechat($product, $fields, $chatter, $additionalInfo);
                     break;
                 case 'email':
-                    $this->email($product, $fields, $chatter, $additionalInfo);
+                    $emailTo = $container->getParameter('email_to_send');
+                    $this->email($product, $fields, $additionalInfo, $emailTo);
                     break;
                 case 'all':
+                    $emailTo = $container->getParameter('email_to_send');
                     $this->slack($product, $fields, $chatter, $additionalInfo);
                     $this->googlechat($product, $fields, $chatter, $additionalInfo);
-                    $this->email($product, $fields, $chatter, $additionalInfo);
+                    $this->email($product, $fields, $additionalInfo, $emailTo);
                     break;
                 default:
                     $this->success = false;
@@ -99,8 +103,17 @@ class ChatterController extends AdminController
         $this->success = false;
     }
 
-    public function email(object $product, array $fields, ChatterInterface $chatter, string $additionalInfo): void
+    public function email(object $product, array $fields, string $additionalInfo, string $emailTo): void
     {
-        $this->success = false;
+        $emailMessage = new EmailMessageModel($product, $fields, $additionalInfo);
+        try {
+            $mail = new Mail();
+            $mail->to($emailTo);
+            $mail->setSubject("Object " . $product->getName() . " id " . $product->getId());
+            $mail->html($emailMessage->create());
+            $mail->send();
+        } catch (TransportExceptionInterface $e) {
+            $this->success = false;
+        }
     }
 }
