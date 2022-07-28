@@ -26,3 +26,4 @@ services:
 parameters:
     class_to_send: Pimcore\Model\DataObject\Car
     fields_to_send: series,Carclass,country,price,bodystyle,manufacturer
+    email_to_send: some@email.com
