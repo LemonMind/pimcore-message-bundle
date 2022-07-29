@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LemonMind\MessageBundle\Controller;
 
 use LemonMind\MessageBundle\Model\EmailMessageModel;
+use LemonMind\MessageBundle\Model\GoogleChatMessageModel;
 use LemonMind\MessageBundle\Model\SlackMessageModel;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Mail;
@@ -100,7 +101,12 @@ class ChatterController extends AdminController
 
     public function googlechat(object $product, array $fields, ChatterInterface $chatter, string $additionalInfo): void
     {
-        $this->success = false;
+        $googlechat = new GoogleChatMessageModel($product, $fields, $additionalInfo);
+        try {
+            $chatter->send($googlechat->create());
+        } catch (TransportExceptionInterface $e) {
+            $this->success = false;
+        }
     }
 
     public function email(object $product, array $fields, string $additionalInfo, string $emailTo): void
