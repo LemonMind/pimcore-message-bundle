@@ -89,6 +89,20 @@ class ChatterController extends AdminController
         }
     }
 
+    /**
+     * @Route("/class")
+     */
+    public function classAction(ContainerInterface $container): Response
+    {
+        $class = $container->getParameter('class_to_send');
+        return $this->json(
+            [
+                'class_to_send' => $class
+            ],
+            Response::HTTP_OK);
+    }
+
+
     public function slack(object $product, array $fields, ChatterInterface $chatter, string $additionalInfo): void
     {
         $slack = new SlackMessageModel($product, $fields, $additionalInfo);
