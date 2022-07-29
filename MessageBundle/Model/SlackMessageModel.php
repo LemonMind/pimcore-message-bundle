@@ -36,19 +36,19 @@ class SlackMessageModel
         $current = 0;
 
         foreach ($this->fields as $field) {
-            if (null === $this->product->get($field)) {
+            $data = $this->product->get($field);
+            if (null === $data) {
                 continue;
             }
 
             $infoBlock->field("*$field*");
-            $infoBlock->field($this->product->get($field));
+            $infoBlock->field(is_scalar($data) ? $data : $data->getName());
             $current++;
             if ($current === self::MAX_FIELDS) {
                 $options->block(($infoBlock));
                 $infoBlock = new SlackSectionBlock();
                 $current = 0;
             }
-
         }
 
         if ($current !== 0 && $current < self::MAX_FIELDS) {

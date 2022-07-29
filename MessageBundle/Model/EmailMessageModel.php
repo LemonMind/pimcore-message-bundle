@@ -20,12 +20,13 @@ class EmailMessageModel
     {
         $html = '<table>';
         foreach ($this->fields as $field) {
-            if (null === $this->product->get($field)) {
+            $data = $this->product->get($field);
+            if (null === $data) {
                 continue;
             }
             $html .= '<tr>';
             $html .= '<td>' . $field . '</td>';
-            $html .= '<td>' . $this->product->get($field) . '</td>';
+            $html .= '<td>' . (is_scalar($data) ? $data : $data->getName()) . '</td>';
             $html .= '</tr>';
         }
         $html .= '</tr>';
