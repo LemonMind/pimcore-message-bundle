@@ -1,0 +1,32 @@
+{
+  "name": "lemonmind/pimcore-message-bundle",
+  "description": "Pimcore Message Bundle - send notifications to Google Chat, Slack and E-mail from Pimcore admin panel",
+  "type": "pimcore-bundle",
+  "license": "GPL-3.0-or-later",
+  "authors": [
+    {
+      "name": "Pawel Filipkowski",
+      "email": "p.filipkowski@lemonmind.com",
+      "homepage": "https://lemonmind.com"
+    }
+  ],
+  "require": {
+    "pimcore/pimcore": "^10.0",
+    "symfony/notifier": "^5.4.0",
+    "symfony/slack-notifier": "^6.1",
+    "symfony/google-chat-notifier": "^6.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "LemonMind\\MessageBundle\\": "/"
+    }
+  },
+  "extra": {
+    "pimcore": {
+      "bundles": [
+        "Lemonmind\\MessageBundle\\LemonMindMessageBundle"
+      ]
+    }
+  }
+}
+
