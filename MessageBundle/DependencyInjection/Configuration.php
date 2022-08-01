@@ -19,10 +19,14 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder('lemon_mind_message');
 
-        // Here you should define the parameters that are allowed to
-        // configure your bundle. See the documentation linked above for
-        // more information on that topic.
-        
+        $treeBuilder->getRootNode()
+            ->children()
+            ->scalarNode('class_to_send')->end()
+            ->scalarNode('fields_to_send')->end()
+            ->scalarNode('email_to_send')->end()
+            ->end()
+            ->end();
+
         return $treeBuilder;
     }
 }

@@ -31,13 +31,13 @@ class ChatterController extends AdminController
     {
         \Pimcore::unsetAdminMode();
 
-        $class = $container->getParameter('class_to_send');
+        $class = $container->getParameter('lemon_mind_message.class_to_send');
         $product = $class::getById($id);
 
         if ($product instanceof AbstractObject) {
             $product::setGetInheritedValues(true);
 
-            $fields = explode(',', $container->getParameter('fields_to_send'));
+            $fields = explode(',', $container->getParameter('lemon_mind_message.fields_to_send'));
             $additionalInfo = $request->get('additionalInfo');
 
             switch ($request->get('chatter')) {
@@ -52,11 +52,11 @@ class ChatterController extends AdminController
                     $this->googlechat($product, $fields, $chatter, $additionalInfo);
                     break;
                 case 'email':
-                    $emailTo = $container->getParameter('email_to_send');
+                    $emailTo = $container->getParameter('lemon_mind_message.email_to_send');
                     $this->email($product, $fields, $additionalInfo, $emailTo);
                     break;
                 case 'all':
-                    $emailTo = $container->getParameter('email_to_send');
+                    $emailTo = $container->getParameter('lemon_mind_message.email_to_send');
                     $this->slack($product, $fields, $chatter, $additionalInfo);
                     $this->googlechat($product, $fields, $chatter, $additionalInfo);
                     $this->email($product, $fields, $additionalInfo, $emailTo);
@@ -94,7 +94,7 @@ class ChatterController extends AdminController
      */
     public function classAction(ContainerInterface $container): Response
     {
-        $class = $container->getParameter('class_to_send');
+        $class = $container->getParameter('lemon_mind_message.class_to_send');
         return $this->json(
             [
                 'class_to_send' => $class

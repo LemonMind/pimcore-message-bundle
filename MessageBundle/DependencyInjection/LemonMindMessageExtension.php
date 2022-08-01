@@ -21,7 +21,9 @@ class LemonMindMessageExtension extends Extension
     {
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
-
+        $container->setParameter('lemon_mind_message.class_to_send', $config['class_to_send']);
+        $container->setParameter('lemon_mind_message.fields_to_send', $config['fields_to_send']);
+        $container->setParameter('lemon_mind_message.email_to_send', $config['email_to_send']);
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
     }
