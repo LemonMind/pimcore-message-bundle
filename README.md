@@ -38,6 +38,7 @@ earlier
 When you click at the button a modal should popup where you can select where you want to send notification and add
 additional information to the message.
 ![](docs/img_modal.png)
+
 -----------
 
 ## Google Chat

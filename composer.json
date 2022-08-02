@@ -18,7 +18,7 @@
   },
   "autoload": {
     "psr-4": {
-      "LemonMind\\MessageBundle\\": "/"
+      "LemonMind\\MessageBundle\\": "/src/MessageBundle"
     }
   },
   "extra": {
