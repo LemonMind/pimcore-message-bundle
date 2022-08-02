@@ -5,7 +5,8 @@ It's Pimcore Bundle to send notifications to Google Chat, Slack or Email from ad
 ## Installation
 
 ```
-
+composer require lemonmind/pimcore-message-bundle
+bin/console pimcore:bundle:enable LemonMindMessageBundle
 ```
 
 Then in your config/config.yaml file you need to add
