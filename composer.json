@@ -18,13 +18,13 @@
   },
   "autoload": {
     "psr-4": {
-      "LemonMind\\MessageBundle\\": "/"
+      "LemonMind\\MessageBundle\\": "/src/MessageBundle"
     }
   },
   "extra": {
     "pimcore": {
       "bundles": [
-        "Lemonmind\\MessageBundle\\LemonMindMessageBundle"
+        "LemonMind\\MessageBundle\\LemonMindMessageBundle"
       ]
     }
   }
