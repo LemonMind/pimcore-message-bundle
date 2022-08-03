@@ -24,6 +24,7 @@ class Configuration implements ConfigurationInterface
             ->scalarNode('class_to_send')->end()
             ->scalarNode('fields_to_send')->end()
             ->scalarNode('email_to_send')->end()
+            ->scalarNode('sms_to')->end()
             ->end()
             ->end();
 

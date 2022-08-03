@@ -7,6 +7,7 @@ namespace LemonMind\MessageBundle\Controller;
 use LemonMind\MessageBundle\Model\EmailMessageModel;
 use LemonMind\MessageBundle\Model\GoogleChatMessageModel;
 use LemonMind\MessageBundle\Model\SlackMessageModel;
+use LemonMind\MessageBundle\Model\SmsMessageModel;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Mail;
 use Pimcore\Model\DataObject\AbstractObject;
@@ -14,6 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Notifier\ChatterInterface;
+use Symfony\Component\Notifier\TexterInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Notifier\Exception\TransportExceptionInterface;
 
@@ -27,7 +29,7 @@ class ChatterController extends AdminController
     /**
      * @Route("/send-notification/{id}", requirements={"id"="\d+"}))
      */
-    public function indexAction(Request $request, int $id, ChatterInterface $chatter, ContainerInterface $container): Response
+    public function indexAction(Request $request, int $id, ChatterInterface $chatter, TexterInterface $texter, ContainerInterface $container): Response
     {
         \Pimcore::unsetAdminMode();
 
@@ -54,6 +56,10 @@ class ChatterController extends AdminController
                 case 'email':
                     $emailTo = $container->getParameter('lemon_mind_message.email_to_send');
                     $this->email($product, $fields, $additionalInfo, $emailTo);
+                    break;
+                case 'sms':
+                    $smsTo = $container->getParameter('lemon_mind_message.sms_to');
+                    $this->sms($product, $fields, $additionalInfo, $smsTo, $texter);
                     break;
                 case 'all':
                     $emailTo = $container->getParameter('lemon_mind_message.email_to_send');
@@ -132,6 +138,16 @@ class ChatterController extends AdminController
             $mail->setSubject("Object " . $product->getName() . " id " . $product->getId());
             $mail->html($emailMessage->create());
             $mail->send();
+        } catch (TransportExceptionInterface $e) {
+            $this->success = false;
+        }
+    }
+
+    public function sms(object $product, array $fields, string $additionalInfo, string $smsTo, TexterInterface $texter): void
+    {
+        $smsMessage = new SmsMessageModel($product, $fields, $additionalInfo, $smsTo);
+        try {
+            $texter->send($smsMessage->create());
         } catch (TransportExceptionInterface $e) {
             $this->success = false;
         }

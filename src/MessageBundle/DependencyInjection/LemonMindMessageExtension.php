@@ -32,7 +32,11 @@ class LemonMindMessageExtension extends Extension
         if (isset($config['email_to_send'])) {
             $container->setParameter('lemon_mind_message.email_to_send', $config['email_to_send']);
         }
-        
+
+        if (isset($config['sms_to'])) {
+            $container->setParameter('lemon_mind_message.sms_to', (string)$config['sms_to']);
+        }
+
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
     }

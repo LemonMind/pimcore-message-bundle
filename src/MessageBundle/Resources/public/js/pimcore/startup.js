@@ -58,6 +58,10 @@ pimcore.plugin.LemonMindMessageBundle = Class.create(pimcore.plugin.admin, {
                                                         optionName: 'Email'
                                                     },
                                                     {
+                                                        value: 'sms',
+                                                        optionName: 'Sms'
+                                                    },
+                                                    {
                                                         value: 'all',
                                                         optionName: 'All above'
                                                     },
