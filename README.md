@@ -1,6 +1,6 @@
 # Send notifications to Google Chat, Slack and Email from Pimcore
 
-It's Pimcore Bundle to send notifications to Google Chat, Slack or Email from admin panel inside Pimcore
+It's Pimcore Bundle to send notifications to Google Chat, Slack, Email or SMS from admin panel inside Pimcore
 
 ## Installation
 
@@ -12,6 +12,8 @@ framework:
         chatter_transports:
             slack: '%env(SLACK_DSN)%'
             googlechat: '%env(GOOGLECHAT_DSN)%'
+        texter_transports:
+            smsapi: '%env(SMSAPI_DSN)%'
 ```
 
 Then you can install and enable the bundle
@@ -28,6 +30,7 @@ lemon_mind_message:
     class_to_send: Pimcore\Model\DataObject\YOUR_CLASS
     fields_to_send: series,Carclass,country,price,bodystyle,manufacturer
     email_to_send: some@email.com
+    sms_to: PHONE_NUMBER
 ```
 
 where:
@@ -35,12 +38,13 @@ where:
 - `class_to_send` is your namespace to your class you want to send notification
 - `fields_to_send` is your class fields separated with coma without space
 - `email_to_send` is e-mail you want to send notification to
+- `sms_to` is the phone number to which you want to send the notification
 
 After correct installation button for sending the notification should be visible only in your class that you defined
 earlier
 ![](docs/img_home.png)
 
-When you click at the button a modal should popup where you can select where you want to send notification and add
+When you click at the button a modal should pop up where you can select where you want to send notification and add
 additional information to the message.
 ![](docs/img_modal.png)
 
@@ -93,3 +97,24 @@ To integrate this package with e-mail, you need to prepare as with regular Pimco
 ### Sample message
 
 ![](docs/img_email_message.png)
+
+-----------
+
+## SMSAPI
+
+To integrate this package with SMSAPI, you need to add dsn in your .env file
+
+```
+SMSAPI_DSN=smsapi://TOKEN@default?from=FROM&fast=FAST&test=TEST
+```
+
+where:
+
+- `TOKEN` is your API Token (OAuth)
+- `FROM` is the sender name
+- `FAST` setting this parameter to 1 (default 0) will result in sending message with the highest priority which
+  ensures the quickest possible time of delivery. Attention! Fast messages cost more than normal messages.
+- `TEST` setting this parameter to 1 (default 0) will result in sending message in test mode (message is
+  validated, but not sent).
+
+You can see your account info at https://ssl.smsapi.pl/
