@@ -1,6 +1,7 @@
-# Send notifications to Google Chat, Slack and Email from Pimcore
+# Send notifications to Discord, Google Chat, Slack and more from Pimcore
 
-It's Pimcore Bundle to send notifications to Google Chat, Slack, Email or SMS from admin panel inside Pimcore
+It's Pimcore Bundle to send notifications to Discord, Google Chat, Slack, Telegram, Email or SMS from admin panel inside
+Pimcore
 
 ## Installation
 
@@ -54,7 +55,7 @@ additional information to the message.
 
 ## Discord
 
-To integrate this bundle with Google Chat you need to add dsn in your .env file
+To integrate this bundle with [Discord](https://discord.com/) you need to add dsn in your .env file
 
 ```
 DISCORD_DSN=discord://TOKEN@default?webhook_id=ID
@@ -73,7 +74,8 @@ where:
 
 ## Google Chat
 
-To integrate this bundle with Google Chat you need to add dsn in your .env file
+To integrate this bundle with [Google Chat](https://workspace.google.com/intl/pl/products/chat/) you need to add dsn in
+your .env file
 
 ```
 GOOGLE_CHAT_DSN=googlechat://ACCESS_KEY:ACCESS_TOKEN@default/SPACE?thread_key=THREAD_KEY
@@ -94,7 +96,7 @@ where:
 
 ## Slack
 
-To integrate this bundle with Slack you need to add dsn in your .env file
+To integrate this bundle with [Slack](https://slack.com/) you need to add dsn in your .env file
 
 ```
 SLACK_DSN=slack://TOKEN@default?channel=CHANNEL
@@ -145,7 +147,7 @@ To integrate this package with e-mail, you need to prepare as with regular Pimco
 
 ## SMSAPI
 
-To integrate this package with SMSAPI, you need to add dsn in your .env file
+To integrate this package with [SMSAPI](https://www.smsapi.pl/), you need to add dsn in your .env file
 
 ```
 SMSAPI_DSN=smsapi://TOKEN@default?from=FROM&fast=FAST&test=TEST

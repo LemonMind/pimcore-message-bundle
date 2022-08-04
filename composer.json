@@ -1,6 +1,6 @@
 {
   "name": "lemonmind/pimcore-message-bundle",
-  "description": "Pimcore Message Bundle - send notifications to Google Chat, Slack and E-mail from Pimcore admin panel",
+  "description": "Pimcore Message Bundle - send notifications to Discord, Google Chat, Slack, Telegram, E-mail or SMS from Pimcore admin panel",
   "type": "pimcore-bundle",
   "license": "GPL-3.0-or-later",
   "authors": [
