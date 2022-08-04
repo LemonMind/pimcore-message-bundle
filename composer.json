@@ -19,6 +19,9 @@
     "symfony/google-chat-notifier": "^6.1",
     "symfony/telegram-notifier": "^6.1"
   },
+  "require-dev": {
+    "phpstan/phpstan": "^1.4"
+  },
   "autoload": {
     "psr-4": {
       "LemonMind\\MessageBundle\\": "/src/MessageBundle"
