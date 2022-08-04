@@ -16,7 +16,8 @@
     "symfony/slack-notifier": "^6.1",
     "symfony/discord-notifier": "^6.1",
     "symfony/smsapi-notifier": "^6.1",
-    "symfony/google-chat-notifier": "^6.1"
+    "symfony/google-chat-notifier": "^6.1",
+    "symfony/telegram-notifier": "^6.1"
   },
   "autoload": {
     "psr-4": {

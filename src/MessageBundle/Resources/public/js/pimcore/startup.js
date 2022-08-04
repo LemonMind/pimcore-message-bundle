@@ -54,6 +54,10 @@ pimcore.plugin.LemonMindMessageBundle = Class.create(pimcore.plugin.admin, {
                                                         optionName: 'Slack'
                                                     },
                                                     {
+                                                        value: 'telegram',
+                                                        optionName: 'Telegram'
+                                                    },
+                                                    {
                                                         value: 'email',
                                                         optionName: 'Email'
                                                     },

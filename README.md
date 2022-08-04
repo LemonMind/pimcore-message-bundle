@@ -13,6 +13,7 @@ framework:
             slack: '%env(SLACK_DSN)%'
             googlechat: '%env(GOOGLECHAT_DSN)%'
             discord: '%env(DISCORD_DSN)%'
+            telegram: '%env(TELEGRAM_DSN)%'
         texter_transports:
             smsapi: '%env(SMSAPI_DSN)%'
 ```
@@ -107,6 +108,28 @@ where:
 ### Sample message
 
 ![](docs/img_slack_message.png)
+
+-----------
+
+## Telegram
+
+To integrate this bundle with [Telegram](https://telegram.org) you need to add dsn in your .env file
+
+```
+TELEGRAM_DSN=telegram://TOKEN@default?channel=CHAT_ID
+```
+
+where:
+
+- `TOKEN`  is your Telegram token
+- `CHAT_ID`  is your Telegram group chat id (starts with -)
+
+You need to contact [BotFather](https://web.telegram.org/z/#93372553) on Telegram to start creating your bot. Then add
+the bot to the group where you want it to send messages
+
+### Sample message
+
+![](docs/img_telegram_message.png)
 
 -----------
 

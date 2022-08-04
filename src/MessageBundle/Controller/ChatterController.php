@@ -9,6 +9,7 @@ use LemonMind\MessageBundle\Model\EmailMessageModel;
 use LemonMind\MessageBundle\Model\GoogleChatMessageModel;
 use LemonMind\MessageBundle\Model\SlackMessageModel;
 use LemonMind\MessageBundle\Model\SmsMessageModel;
+use LemonMind\MessageBundle\Model\TelegramMessageModel;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Mail;
 use Pimcore\Model\DataObject\AbstractObject;
@@ -52,6 +53,9 @@ class ChatterController extends AdminController
                     break;
                 case 'slack':
                     $this->slack($product, $fields, $additionalInfo, $chatter);
+                    break;
+                case 'telegram':
+                    $this->telegram($product, $fields, $additionalInfo, $chatter);
                     break;
                 case 'email':
                     $emailTo = $container->getParameter('lemon_mind_message.email_to_send');
@@ -128,6 +132,16 @@ class ChatterController extends AdminController
         $googlechat = new GoogleChatMessageModel($product, $fields, $additionalInfo);
         try {
             $chatter->send($googlechat->create());
+        } catch (TransportExceptionInterface $e) {
+            $this->success = false;
+        }
+    }
+
+    public function telegram(object $product, array $fields, string $additionalInfo, ChatterInterface $chatter): void
+    {
+        $telegram = new TelegramMessageModel($product, $fields, $additionalInfo);
+        try {
+            $chatter->send($telegram->create());
         } catch (TransportExceptionInterface $e) {
             $this->success = false;
         }
