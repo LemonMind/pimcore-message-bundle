@@ -5,19 +5,8 @@ namespace LemonMind\MessageBundle\Model;
 use Symfony\Component\Notifier\Bridge\GoogleChat\GoogleChatOptions;
 use Symfony\Component\Notifier\Message\ChatMessage;
 
-class GoogleChatMessageModel
+class GoogleChatMessageModel extends AbstractMessageModel
 {
-    private object $product;
-    private array $fields;
-    private string $additionalInfo;
-
-    public function __construct(object $product, array $fields, string $additionalInfo)
-    {
-        $this->product = $product;
-        $this->fields = $fields;
-        $this->additionalInfo = $additionalInfo;
-    }
-
     public function create(): ChatMessage
     {
         $chatMessage = new ChatMessage('Object ' . $this->product->getId());

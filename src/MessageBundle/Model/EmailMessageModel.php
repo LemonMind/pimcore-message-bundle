@@ -3,19 +3,8 @@
 namespace LemonMind\MessageBundle\Model;
 
 
-class EmailMessageModel
+class EmailMessageModel extends AbstractMessageModel
 {
-    private object $product;
-    private array $fields;
-    private string $additionalInfo;
-
-    public function __construct(object $product, array $fields, string $additionalInfo)
-    {
-        $this->product = $product;
-        $this->fields = $fields;
-        $this->additionalInfo = $additionalInfo;
-    }
-
     public function create(): string
     {
         $html = '<table>';

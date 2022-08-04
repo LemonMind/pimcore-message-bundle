@@ -7,19 +7,8 @@ use Symfony\Component\Notifier\Bridge\Discord\Embeds\DiscordEmbed;
 use Symfony\Component\Notifier\Bridge\Discord\Embeds\DiscordFieldEmbedObject;
 use Symfony\Component\Notifier\Message\ChatMessage;
 
-class DiscordMessageModel
+class DiscordMessageModel extends AbstractMessageModel
 {
-    private object $product;
-    private array $fields;
-    private string $additionalInfo;
-
-    public function __construct(object $product, array $fields, string $additionalInfo)
-    {
-        $this->product = $product;
-        $this->fields = $fields;
-        $this->additionalInfo = $additionalInfo;
-    }
-
     public function create(): ChatMessage
     {
         $chatMessage = new ChatMessage('');

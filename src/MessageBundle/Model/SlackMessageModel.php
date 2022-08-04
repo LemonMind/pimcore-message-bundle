@@ -9,20 +9,9 @@ use Symfony\Component\Notifier\Bridge\Slack\Block\SlackSectionBlock;
 use Symfony\Component\Notifier\Bridge\Slack\SlackOptions;
 use Symfony\Component\Notifier\Message\ChatMessage;
 
-class SlackMessageModel
+class SlackMessageModel extends AbstractMessageModel
 {
     private const MAX_FIELDS = 5;
-
-    private object $product;
-    private array $fields;
-    private string $additionalInfo;
-
-    public function __construct(object $product, array $fields, string $additionalInfo)
-    {
-        $this->product = $product;
-        $this->fields = $fields;
-        $this->additionalInfo = $additionalInfo;
-    }
 
     public function create(): ChatMessage
     {
