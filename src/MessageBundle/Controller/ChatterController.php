@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LemonMind\MessageBundle\Controller;
 
+use LemonMind\MessageBundle\Model\DiscordMessageModel;
 use LemonMind\MessageBundle\Model\EmailMessageModel;
 use LemonMind\MessageBundle\Model\GoogleChatMessageModel;
 use LemonMind\MessageBundle\Model\SlackMessageModel;
@@ -43,15 +44,14 @@ class ChatterController extends AdminController
             $additionalInfo = $request->get('additionalInfo');
 
             switch ($request->get('chatter')) {
+                case 'discord':
+                    $this->discord($product, $fields, $additionalInfo, $chatter);
+                    break;
                 case 'googlechat':
-                    $this->googlechat($product, $fields, $chatter, $additionalInfo);
+                    $this->googlechat($product, $fields, $additionalInfo, $chatter);
                     break;
                 case 'slack':
-                    $this->slack($product, $fields, $chatter, $additionalInfo);
-                    break;
-                case 'chattersAll':
-                    $this->slack($product, $fields, $chatter, $additionalInfo);
-                    $this->googlechat($product, $fields, $chatter, $additionalInfo);
+                    $this->slack($product, $fields, $additionalInfo, $chatter);
                     break;
                 case 'email':
                     $emailTo = $container->getParameter('lemon_mind_message.email_to_send');
@@ -60,12 +60,6 @@ class ChatterController extends AdminController
                 case 'sms':
                     $smsTo = $container->getParameter('lemon_mind_message.sms_to');
                     $this->sms($product, $fields, $additionalInfo, $smsTo, $texter);
-                    break;
-                case 'all':
-                    $emailTo = $container->getParameter('lemon_mind_message.email_to_send');
-                    $this->slack($product, $fields, $chatter, $additionalInfo);
-                    $this->googlechat($product, $fields, $chatter, $additionalInfo);
-                    $this->email($product, $fields, $additionalInfo, $emailTo);
                     break;
                 default:
                     $this->success = false;
@@ -108,8 +102,18 @@ class ChatterController extends AdminController
             Response::HTTP_OK);
     }
 
+    public function discord(object $product, array $fields, string $additionalInfo, ChatterInterface $chatter): void
+    {
+        $discord = new DiscordMessageModel($product, $fields, $additionalInfo);
+        try {
+            $chatter->send($discord->create());
+        } catch (TransportExceptionInterface $e) {
+            $this->success = false;
+        }
+    }
 
-    public function slack(object $product, array $fields, ChatterInterface $chatter, string $additionalInfo): void
+
+    public function slack(object $product, array $fields, string $additionalInfo, ChatterInterface $chatter): void
     {
         $slack = new SlackMessageModel($product, $fields, $additionalInfo);
         try {
@@ -119,7 +123,7 @@ class ChatterController extends AdminController
         }
     }
 
-    public function googlechat(object $product, array $fields, ChatterInterface $chatter, string $additionalInfo): void
+    public function googlechat(object $product, array $fields, string $additionalInfo, ChatterInterface $chatter): void
     {
         $googlechat = new GoogleChatMessageModel($product, $fields, $additionalInfo);
         try {
