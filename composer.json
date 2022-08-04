@@ -14,6 +14,7 @@
     "pimcore/pimcore": "^10.0",
     "symfony/notifier": "^5.4.0",
     "symfony/slack-notifier": "^6.1",
+    "symfony/discord-notifier": "^6.1",
     "symfony/smsapi-notifier": "^6.1",
     "symfony/google-chat-notifier": "^6.1"
   },

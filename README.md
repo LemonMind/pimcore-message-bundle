@@ -12,6 +12,7 @@ framework:
         chatter_transports:
             slack: '%env(SLACK_DSN)%'
             googlechat: '%env(GOOGLECHAT_DSN)%'
+            discord: '%env(DISCORD_DSN)%'
         texter_transports:
             smsapi: '%env(SMSAPI_DSN)%'
 ```
@@ -47,6 +48,25 @@ earlier
 When you click at the button a modal should pop up where you can select where you want to send notification and add
 additional information to the message.
 ![](docs/img_modal.png)
+
+-----------
+
+## Discord
+
+To integrate this bundle with Google Chat you need to add dsn in your .env file
+
+```
+DISCORD_DSN=discord://TOKEN@default?webhook_id=ID
+```
+
+where:
+
+- `TOKEN` is your secure token of the webhook (returned for Incoming Webhooks)
+- `ID` is the id of the webhook
+
+### Sample message
+
+![](docs/img_discord_message.png)
 
 -----------
 

@@ -42,6 +42,10 @@ pimcore.plugin.LemonMindMessageBundle = Class.create(pimcore.plugin.admin, {
                                                 fields: ['optionName', 'value'],
                                                 data: [
                                                     {
+                                                        value: 'discord',
+                                                        optionName: 'Discord'
+                                                    },
+                                                    {
                                                         value: 'googlechat',
                                                         optionName: 'Google Chat'
                                                     },
@@ -50,20 +54,12 @@ pimcore.plugin.LemonMindMessageBundle = Class.create(pimcore.plugin.admin, {
                                                         optionName: 'Slack'
                                                     },
                                                     {
-                                                        value: 'chattersAll',
-                                                        optionName: 'Google Chat + Slack'
-                                                    },
-                                                    {
                                                         value: 'email',
                                                         optionName: 'Email'
                                                     },
                                                     {
                                                         value: 'sms',
                                                         optionName: 'Sms'
-                                                    },
-                                                    {
-                                                        value: 'all',
-                                                        optionName: 'All above'
                                                     },
                                                 ]
                                             }),
