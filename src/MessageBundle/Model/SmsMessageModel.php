@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LemonMind\MessageBundle\Model;
 
 use Pimcore\Model\DataObject\AbstractObject;
@@ -24,8 +26,10 @@ class SmsMessageModel
     {
         if ($this->product instanceof AbstractObject) {
             $smsBody = 'Object id: ' . $this->product->getId();
+
             foreach ($this->fields as $field) {
                 $data = $this->product->get($field);
+
                 if (null === $data) {
                     continue;
                 }
@@ -33,15 +37,16 @@ class SmsMessageModel
                 $smsBody .= is_scalar($data) ? $data : $data->getName();
             }
 
-            if ($this->additionalInfo !== '') {
+            if ('' !== $this->additionalInfo) {
                 $smsBody .= " Additional information: $this->additionalInfo";
             }
 
             $sms = new SmsMessage("+$this->smsTo", $smsBody);
             $sms->transport('smsapi');
         } else {
-            $sms = new SmsMessage("+$this->smsTo", "Error creating message");
+            $sms = new SmsMessage("+$this->smsTo", 'Error creating message');
         }
+
         return $sms;
     }
 }

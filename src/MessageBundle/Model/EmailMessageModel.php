@@ -1,7 +1,8 @@
 <?php
 
-namespace LemonMind\MessageBundle\Model;
+declare(strict_types=1);
 
+namespace LemonMind\MessageBundle\Model;
 
 use Pimcore\Model\DataObject\AbstractObject;
 
@@ -11,8 +12,10 @@ class EmailMessageModel extends AbstractMessageModel
     {
         if ($this->product instanceof AbstractObject) {
             $html = '<table>';
+
             foreach ($this->fields as $field) {
                 $data = $this->product->get($field);
+
                 if (null === $data) {
                     continue;
                 }
@@ -23,13 +26,14 @@ class EmailMessageModel extends AbstractMessageModel
             }
             $html .= '</tr>';
             $html .= '</table>';
-            if ($this->additionalInfo !== '') {
+
+            if ('' !== $this->additionalInfo) {
                 $html .= '<br>' . $this->additionalInfo;
             }
         } else {
             $html = 'Error creating message';
         }
+
         return $html;
     }
-
 }

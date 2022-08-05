@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LemonMind\MessageBundle;
 
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
@@ -12,7 +14,7 @@ class LemonMindMessageBundle extends AbstractPimcoreBundle
     public function getJsPaths()
     {
         return [
-            '/bundles/lemonmindmessage/js/pimcore/startup.js'
+            '/bundles/lemonmindmessage/js/pimcore/startup.js',
         ];
     }
 }

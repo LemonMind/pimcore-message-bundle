@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LemonMind\MessageBundle\Model;
 
 use Pimcore\Model\DataObject\AbstractObject;
@@ -19,6 +21,7 @@ class GoogleChatMessageModel extends AbstractMessageModel
 
             foreach ($this->fields as $field) {
                 $data = $this->product->get($field);
+
                 if (null === $data) {
                     continue;
                 }
@@ -30,7 +33,7 @@ class GoogleChatMessageModel extends AbstractMessageModel
 
             $sections[]['widgets'] = $widgets;
 
-            if ($this->additionalInfo !== '') {
+            if ('' !== $this->additionalInfo) {
                 $widgets = [];
                 $textParagraph = [];
                 $headerParagraph['text'] = 'Additional information';
@@ -45,15 +48,16 @@ class GoogleChatMessageModel extends AbstractMessageModel
                 ->card(
                     [
                         'header' => $header,
-                        'sections' => $sections
+                        'sections' => $sections,
                     ]
                 );
 
             $chatMessage->options($options);
             $chatMessage->transport('googlechat');
         } else {
-            $chatMessage = new ChatMessage("Error creating message");
+            $chatMessage = new ChatMessage('Error creating message');
         }
+
         return $chatMessage;
     }
 }

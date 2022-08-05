@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LemonMind\MessageBundle\Model;
 
 use Pimcore\Model\DataObject\AbstractObject;
@@ -20,7 +22,7 @@ class SlackMessageModel extends AbstractMessageModel
             $chatMessage = new ChatMessage('Object ' . $this->product->getId());
 
             $options = (new SlackOptions())
-                ->block((new SlackHeaderBlock("Object id " . $this->product->getId())))
+                ->block(new SlackHeaderBlock('Object id ' . $this->product->getId()))
                 ->block(new SlackDividerBlock());
 
             $infoBlock = new SlackSectionBlock();
@@ -28,26 +30,28 @@ class SlackMessageModel extends AbstractMessageModel
 
             foreach ($this->fields as $field) {
                 $data = $this->product->get($field);
+
                 if (null === $data) {
                     continue;
                 }
 
                 $infoBlock->field("*$field*");
                 $infoBlock->field(is_scalar($data) ? $data : $data->getName());
-                $current++;
-                if ($current === self::MAX_FIELDS) {
-                    $options->block(($infoBlock));
+                ++$current;
+
+                if (self::MAX_FIELDS === $current) {
+                    $options->block($infoBlock);
                     $infoBlock = new SlackSectionBlock();
                     $current = 0;
                 }
             }
 
-            if ($current !== 0 && $current < self::MAX_FIELDS) {
-                $options->block(($infoBlock));
+            if (0 !== $current && $current < self::MAX_FIELDS) {
+                $options->block($infoBlock);
             }
             $options->block(new SlackDividerBlock());
 
-            if ($this->additionalInfo !== '') {
+            if ('' !== $this->additionalInfo) {
                 $options->block((new SlackContextBlock())->text($this->additionalInfo));
                 $options->block(new SlackDividerBlock());
             }
@@ -55,10 +59,9 @@ class SlackMessageModel extends AbstractMessageModel
             $chatMessage->options($options);
             $chatMessage->transport('slack');
         } else {
-            $chatMessage = new ChatMessage("Error creating message");
+            $chatMessage = new ChatMessage('Error creating message');
         }
 
         return $chatMessage;
     }
-
 }

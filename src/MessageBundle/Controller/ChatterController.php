@@ -17,9 +17,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Notifier\ChatterInterface;
+use Symfony\Component\Notifier\Exception\TransportExceptionInterface;
 use Symfony\Component\Notifier\TexterInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Notifier\Exception\TransportExceptionInterface;
 
 /**
  * @Route("/admin/chatter")
@@ -41,6 +41,7 @@ class ChatterController extends AdminController
             $product = $class::getById($id);
         } else {
             $this->success = false;
+
             return $this->json(
                 [
                     'success' => $this->success,
@@ -57,29 +58,37 @@ class ChatterController extends AdminController
             switch ($request->get('chatter')) {
                 case 'discord':
                     $this->discord($product, $fields, $additionalInfo, $chatter);
+
                     break;
                 case 'googlechat':
                     $this->googlechat($product, $fields, $additionalInfo, $chatter);
+
                     break;
                 case 'slack':
                     $this->slack($product, $fields, $additionalInfo, $chatter);
+
                     break;
                 case 'telegram':
                     $this->telegram($product, $fields, $additionalInfo, $chatter);
+
                     break;
                 case 'email':
                     $emailTo = $container->getParameter('lemon_mind_message.email_to_send');
+
                     if (!is_string($emailTo)) {
                         $emailTo = '';
                     }
                     $this->email($product, $fields, $additionalInfo, $emailTo);
+
                     break;
                 case 'sms':
                     $smsTo = $container->getParameter('lemon_mind_message.sms_to');
+
                     if (!is_string($smsTo)) {
                         $smsTo = '';
                     }
                     $this->sms($product, $fields, $additionalInfo, $smsTo, $texter);
+
                     break;
                 default:
                     $this->success = false;
@@ -98,9 +107,9 @@ class ChatterController extends AdminController
                     ],
                     Response::HTTP_BAD_REQUEST);
             }
-
         } else {
             $this->success = false;
+
             return $this->json(
                 [
                     'success' => $this->success,
@@ -115,9 +124,10 @@ class ChatterController extends AdminController
     public function classAction(ContainerInterface $container): Response
     {
         $class = $container->getParameter('lemon_mind_message.class_to_send');
+
         return $this->json(
             [
-                'class_to_send' => $class
+                'class_to_send' => $class,
             ],
             Response::HTTP_OK);
     }
@@ -125,6 +135,7 @@ class ChatterController extends AdminController
     public function discord(object $product, array $fields, string $additionalInfo, ChatterInterface $chatter): void
     {
         $discord = new DiscordMessageModel($product, $fields, $additionalInfo);
+
         try {
             $chatter->send($discord->create());
         } catch (TransportExceptionInterface $e) {
@@ -132,10 +143,10 @@ class ChatterController extends AdminController
         }
     }
 
-
     public function slack(object $product, array $fields, string $additionalInfo, ChatterInterface $chatter): void
     {
         $slack = new SlackMessageModel($product, $fields, $additionalInfo);
+
         try {
             $chatter->send($slack->create());
         } catch (TransportExceptionInterface $e) {
@@ -146,6 +157,7 @@ class ChatterController extends AdminController
     public function googlechat(object $product, array $fields, string $additionalInfo, ChatterInterface $chatter): void
     {
         $googlechat = new GoogleChatMessageModel($product, $fields, $additionalInfo);
+
         try {
             $chatter->send($googlechat->create());
         } catch (TransportExceptionInterface $e) {
@@ -156,6 +168,7 @@ class ChatterController extends AdminController
     public function telegram(object $product, array $fields, string $additionalInfo, ChatterInterface $chatter): void
     {
         $telegram = new TelegramMessageModel($product, $fields, $additionalInfo);
+
         try {
             $chatter->send($telegram->create());
         } catch (TransportExceptionInterface $e) {
@@ -167,10 +180,11 @@ class ChatterController extends AdminController
     {
         if ($product instanceof AbstractObject) {
             $emailMessage = new EmailMessageModel($product, $fields, $additionalInfo);
+
             try {
                 $mail = new Mail();
                 $mail->to($emailTo);
-                $mail->setSubject("Object id " . $product->getId());
+                $mail->setSubject('Object id ' . $product->getId());
                 $mail->html($emailMessage->create());
                 $mail->send();
             } catch (TransportExceptionInterface $e) {
@@ -184,6 +198,7 @@ class ChatterController extends AdminController
     public function sms(object $product, array $fields, string $additionalInfo, string $smsTo, TexterInterface $texter): void
     {
         $smsMessage = new SmsMessageModel($product, $fields, $additionalInfo, $smsTo);
+
         try {
             $texter->send($smsMessage->create());
         } catch (TransportExceptionInterface $e) {
