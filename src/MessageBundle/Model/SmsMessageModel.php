@@ -2,6 +2,7 @@
 
 namespace LemonMind\MessageBundle\Model;
 
+use Pimcore\Model\DataObject\AbstractObject;
 use Symfony\Component\Notifier\Message\SmsMessage;
 
 class SmsMessageModel
@@ -21,23 +22,26 @@ class SmsMessageModel
 
     public function create(): SmsMessage
     {
-        $smsBody = 'Object: ' . $this->product->getName() . ' id: ' . $this->product->getId();
-        foreach ($this->fields as $field) {
-            $data = $this->product->get($field);
-            if (null === $data) {
-                continue;
+        if ($this->product instanceof AbstractObject) {
+            $smsBody = 'Object id: ' . $this->product->getId();
+            foreach ($this->fields as $field) {
+                $data = $this->product->get($field);
+                if (null === $data) {
+                    continue;
+                }
+                $smsBody .= " $field: ";
+                $smsBody .= is_scalar($data) ? $data : $data->getName();
             }
-            $smsBody .= " $field: ";
-            $smsBody .= is_scalar($data) ? $data : $data->getName();
+
+            if ($this->additionalInfo !== '') {
+                $smsBody .= " Additional information: $this->additionalInfo";
+            }
+
+            $sms = new SmsMessage("+$this->smsTo", $smsBody);
+            $sms->transport('smsapi');
+        } else {
+            $sms = new SmsMessage("+$this->smsTo", "Error creating message");
         }
-
-        if ($this->additionalInfo !== '') {
-            $smsBody .= " Additional information: $this->additionalInfo";
-        }
-
-        $sms = new SmsMessage("+$this->smsTo", $smsBody);
-        $sms->transport('smsapi');
-
         return $sms;
     }
 }

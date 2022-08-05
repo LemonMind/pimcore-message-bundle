@@ -36,7 +36,17 @@ class ChatterController extends AdminController
         \Pimcore::unsetAdminMode();
 
         $class = $container->getParameter('lemon_mind_message.class_to_send');
-        $product = $class::getById($id);
+
+        if (class_exists($class)) {
+            $product = $class::getById($id);
+        } else {
+            $this->success = false;
+            return $this->json(
+                [
+                    'success' => $this->success,
+                ],
+                Response::HTTP_BAD_REQUEST);
+        }
 
         if ($product instanceof AbstractObject) {
             $product::setGetInheritedValues(true);
@@ -59,10 +69,16 @@ class ChatterController extends AdminController
                     break;
                 case 'email':
                     $emailTo = $container->getParameter('lemon_mind_message.email_to_send');
+                    if (!is_string($emailTo)) {
+                        $emailTo = '';
+                    }
                     $this->email($product, $fields, $additionalInfo, $emailTo);
                     break;
                 case 'sms':
                     $smsTo = $container->getParameter('lemon_mind_message.sms_to');
+                    if (!is_string($smsTo)) {
+                        $smsTo = '';
+                    }
                     $this->sms($product, $fields, $additionalInfo, $smsTo, $texter);
                     break;
                 default:
@@ -149,14 +165,18 @@ class ChatterController extends AdminController
 
     public function email(object $product, array $fields, string $additionalInfo, string $emailTo): void
     {
-        $emailMessage = new EmailMessageModel($product, $fields, $additionalInfo);
-        try {
-            $mail = new Mail();
-            $mail->to($emailTo);
-            $mail->setSubject("Object " . $product->getName() . " id " . $product->getId());
-            $mail->html($emailMessage->create());
-            $mail->send();
-        } catch (TransportExceptionInterface $e) {
+        if ($product instanceof AbstractObject) {
+            $emailMessage = new EmailMessageModel($product, $fields, $additionalInfo);
+            try {
+                $mail = new Mail();
+                $mail->to($emailTo);
+                $mail->setSubject("Object id " . $product->getId());
+                $mail->html($emailMessage->create());
+                $mail->send();
+            } catch (TransportExceptionInterface $e) {
+                $this->success = false;
+            }
+        } else {
             $this->success = false;
         }
     }
