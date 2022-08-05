@@ -1,8 +1,8 @@
 <?php
 
-namespace LemonMind\MessageBundle\Model;
+declare(strict_types=1);
 
-use Symfony\Component\Notifier\Message\ChatMessage;
+namespace LemonMind\MessageBundle\Model;
 
 class AbstractMessageModel
 {

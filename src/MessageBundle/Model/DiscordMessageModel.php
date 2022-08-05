@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LemonMind\MessageBundle\Model;
 
 use Pimcore\Model\DataObject\AbstractObject;
@@ -17,10 +19,11 @@ class DiscordMessageModel extends AbstractMessageModel
 
             $options = new DiscordOptions();
             $embed = new DiscordEmbed();
-            $embed->title("Object id " . $this->product->getId());
+            $embed->title('Object id ' . $this->product->getId());
 
             foreach ($this->fields as $field) {
                 $data = $this->product->get($field);
+
                 if (null === $data) {
                     continue;
                 }
@@ -30,9 +33,10 @@ class DiscordMessageModel extends AbstractMessageModel
                 $discordField->value(is_scalar($data) ? $data : $data->getName());
                 $embed->addField($discordField);
             }
-            if ($this->additionalInfo !== '') {
+
+            if ('' !== $this->additionalInfo) {
                 $discordField = new DiscordFieldEmbedObject();
-                $discordField->name("Additional information");
+                $discordField->name('Additional information');
                 $discordField->value($this->additionalInfo);
                 $embed->addField($discordField);
             }
@@ -43,6 +47,7 @@ class DiscordMessageModel extends AbstractMessageModel
         } else {
             $chatMessage = new ChatMessage('Error creating message');
         }
+
         return $chatMessage;
     }
 }
