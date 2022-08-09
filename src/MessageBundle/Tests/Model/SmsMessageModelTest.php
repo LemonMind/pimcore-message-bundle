@@ -18,17 +18,17 @@ class SmsMessageModelTest extends KernelTestCase
     protected function setUp(): void
     {
         $this->testProduct = new class() extends AbstractProduct {
-            public function getId()
+            public function getId(): int
             {
                 return 1;
             }
 
-            public function getName()
+            public function getName(): string
             {
                 return 'name';
             }
 
-            public function getPrice()
+            public function getPrice(): string
             {
                 return '20';
             }
@@ -39,7 +39,7 @@ class SmsMessageModelTest extends KernelTestCase
      * @test
      * @dataProvider dataProvider
      */
-    public function testSmsBody(array $fields, string $additionalInfo, string $smsTo, string $expected)
+    public function testSmsBody(array $fields, string $additionalInfo, string $smsTo, string $expected): void
     {
         $smsMessage = new SmsMessageModel($this->testProduct, $fields, $additionalInfo, $smsTo);
         $options = $smsMessage->create();
@@ -51,7 +51,7 @@ class SmsMessageModelTest extends KernelTestCase
      * @test
      * @dataProvider dataProvider
      */
-    public function testSmsPhone(array $fields, string $additionalInfo, string $smsTo, string $expected)
+    public function testSmsPhone(array $fields, string $additionalInfo, string $smsTo, string $expected): void
     {
         $smsMessage = new SmsMessageModel($this->testProduct, $fields, $additionalInfo, $smsTo);
         $options = $smsMessage->create();
@@ -72,8 +72,8 @@ class SmsMessageModelTest extends KernelTestCase
         ];
     }
 
-    protected function tearDown(): void
-    {
-        $this->testProduct = null;
-    }
+    // protected function tearDown(): void
+    // {
+    //     $this->testProduct = null;
+    // }
 }

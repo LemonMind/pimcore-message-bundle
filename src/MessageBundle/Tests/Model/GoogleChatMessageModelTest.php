@@ -18,17 +18,17 @@ class GoogleChatMessageModelTest extends KernelTestCase
     protected function setUp(): void
     {
         $this->testProduct = new class() extends AbstractProduct {
-            public function getId()
+            public function getId(): int
             {
                 return 1;
             }
 
-            public function getName()
+            public function getName(): string
             {
                 return 'name';
             }
 
-            public function getPrice()
+            public function getPrice(): string
             {
                 return '20';
             }
@@ -38,10 +38,16 @@ class GoogleChatMessageModelTest extends KernelTestCase
     /**
      * @test
      */
-    public function testHeader()
+    public function testHeader(): void
     {
         $googleMessage = new GoogleChatMessageModel($this->testProduct, [], '');
-        $options = $googleMessage->create()->getOptions()->toArray();
+        $options = $googleMessage->create()->getOptions();
+
+        if (!is_null($options)) {
+            $options = $options->toArray();
+        } else {
+            throw new \Exception('options is null');
+        }
 
         $header = $options['cards'][0]['header'];
         $this->assertEquals('Object id 1', $header['title']);
@@ -51,10 +57,16 @@ class GoogleChatMessageModelTest extends KernelTestCase
      * @test
      * @dataProvider dataProvider
      */
-    public function testAdditionalInfoWidget(array $fields, string $additionalInfo, array $expected)
+    public function testAdditionalInfoWidget(array $fields, string $additionalInfo, array $expected): void
     {
         $googleMessage = new GoogleChatMessageModel($this->testProduct, [], $additionalInfo);
-        $options = $googleMessage->create()->getOptions()->toArray();
+        $options = $googleMessage->create()->getOptions();
+
+        if (!is_null($options)) {
+            $options = $options->toArray();
+        } else {
+            throw new \Exception('options is null');
+        }
 
         if ('' === $additionalInfo) {
             $this->assertLessThan(2, count($options['cards'][0]['sections']));
@@ -76,10 +88,16 @@ class GoogleChatMessageModelTest extends KernelTestCase
      * @test
      * @dataProvider dataProvider
      */
-    public function testDataWidget(array $fields, string $additionalInfo, array $expected)
+    public function testDataWidget(array $fields, string $additionalInfo, array $expected): void
     {
         $googleMessage = new GoogleChatMessageModel($this->testProduct, $fields, $additionalInfo);
-        $options = $googleMessage->create()->getOptions()->toArray();
+        $options = $googleMessage->create()->getOptions();
+
+        if (!is_null($options)) {
+            $options = $options->toArray();
+        } else {
+            throw new \Exception('options is null');
+        }
 
         $dataWidget = $options['cards'][0]['sections'][0]['widgets'];
 
@@ -91,7 +109,7 @@ class GoogleChatMessageModelTest extends KernelTestCase
             $needle = [
                 'topLabel' => $field,
                 'content' => $expected[$field],
-              ];
+            ];
 
             $r = array_search($needle, array_column($dataWidget, 'keyValue'), true);
             $this->assertNotFalse($r);
@@ -108,10 +126,5 @@ class GoogleChatMessageModelTest extends KernelTestCase
             [['name'], 'lorem', ['name' => 'name']],
             [['name', 'price'], 'lorem', ['name' => 'name', 'price' => '20']],
         ];
-    }
-
-    protected function tearDown(): void
-    {
-        $this->testProduct = null;
     }
 }

@@ -6,53 +6,55 @@ namespace LemonMind\MessageBundle\Tests;
 
 use LemonMind\MessageBundle\Model\DiscordMessageModel;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
-use Pimcore\Model\DataObject\BodyStyle;
-use Pimcore\Model\DataObject\Car;
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Test\KernelTestCase;
 
 class DiscordMessageModelTest extends KernelTestCase
 {
     /**
-     * @var AbstractProduct
+     * @var AbstractObject
      */
     private $testProduct;
 
     protected function setUp(): void
     {
         $this->testProduct = new class() extends AbstractProduct {
-            public function getId()
+            public function getId(): int
             {
                 return 1;
             }
 
-            public function getName()
+            public function getName(): string
             {
                 return 'name';
             }
 
-            public function getPrice()
+            public function getPrice(): string
             {
                 return '20';
             }
         };
     }
 
-    /**
-     * @test
-     */
-    public function testTitle()
+    public function testTitle(): void
     {
         $discordMessage = new DiscordMessageModel($this->testProduct, [], '');
+        $options = $discordMessage->create()->getOptions();
 
-        $this->assertEquals('Object id 1', $discordMessage->create()->getOptions()
-            ->toArray()['embeds'][0]['title']);
+        if (!is_null($options)) {
+            $options = $options->toArray();
+        } else {
+            throw new \Exception('options is null');
+        }
+
+        $this->assertEquals('Object id 1', $options['embeds'][0]['title']);
     }
 
     /**
      * @test
      * @dataProvider dataProvider
      */
-    public function testEmbedFields(array $fields, string $additionalInfo, string $expected)
+    public function testEmbedFields(array $fields, string $additionalInfo, string $expected): void
     {
         $discordMessage = new DiscordMessageModel($this->testProduct, $fields, $additionalInfo);
 
@@ -62,7 +64,15 @@ class DiscordMessageModelTest extends KernelTestCase
             return;
         }
 
-        $actualFields = $discordMessage->create()->getOptions()->toArray()['embeds'][0]['fields'];
+        $options = $discordMessage->create()->getOptions();
+
+        if (!is_null($options)) {
+            $options = $options->toArray();
+        } else {
+            throw new \Exception('options is null');
+        }
+
+        $actualFields = $options['embeds'][0]['fields'];
         $actual = '';
 
         foreach ($actualFields as $field) {
@@ -86,8 +96,8 @@ class DiscordMessageModelTest extends KernelTestCase
         ];
     }
 
-    protected function tearDown(): void
-    {
-        $this->testProduct = null;
-    }
+    // protected function tearDown(): void
+    // {
+    //     $this->testProduct = null;
+    // }
 }
