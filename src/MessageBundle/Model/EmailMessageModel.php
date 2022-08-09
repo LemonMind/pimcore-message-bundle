@@ -24,7 +24,6 @@ class EmailMessageModel extends AbstractMessageModel
                 $html .= '<td>' . (is_scalar($data) ? $data : $data->getName()) . '</td>';
                 $html .= '</tr>';
             }
-            $html .= '</tr>';
             $html .= '</table>';
 
             if ('' !== $this->additionalInfo) {
