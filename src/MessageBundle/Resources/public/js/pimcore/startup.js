@@ -9,13 +9,26 @@ pimcore.plugin.LemonMindMessageBundle = Class.create(pimcore.plugin.admin, {
         pimcore.plugin.broker.registerPlugin(this);
     },
 
+
     postOpenObject: function (object, type) {
+
         Ext.Ajax.request({
             url: '/admin/chatter/class',
             success: function (response) {
                 let data = Ext.decode(response.responseText);
                 let objectClasses = object.data.general.php.classes;
-                if (objectClasses.includes(data.class_to_send)) {
+
+                function contains(value) {
+                    for (let i = 0; i < data.classes.length; i++) {
+                        if (value.includes(data.classes[i])) {
+                            return value
+                        }
+                    }
+                    return null
+                }
+
+                let classToSend = objectClasses.filter(contains);
+                if (classToSend.length > 0) {
                     object.toolbar.add({
                         text: t('send-notification'),
                         iconCls: 'pimcore_icon_comments',
@@ -78,7 +91,14 @@ pimcore.plugin.LemonMindMessageBundle = Class.create(pimcore.plugin.admin, {
                                             name: 'additionalInfo',
                                             allowBlank: true,
                                             margin: '5'
-                                        }],
+                                        },
+                                            {
+                                                xtype: 'hiddenfield',
+                                                name: 'classToSend',
+                                                value: classToSend,
+                                            }
+                                        ],
+
                                         buttons: [{
                                             text: 'Close',
                                             handler: function () {
