@@ -163,7 +163,6 @@ class ChatterController extends AdminController
         }
     }
 
-
     public function email(EmailMessageModel $emailMessage, string $emailTo): void
     {
         try {
