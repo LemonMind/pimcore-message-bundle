@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LemonMind\MessageBundle\Controller;
 
+use LemonMind\MessageBundle\Model\AbstractMessageModel;
 use LemonMind\MessageBundle\Model\DiscordMessageModel;
 use LemonMind\MessageBundle\Model\EmailMessageModel;
 use LemonMind\MessageBundle\Model\GoogleChatMessageModel;
@@ -46,7 +47,8 @@ class ChatterController extends AdminController
                 [
                     'success' => $this->success,
                 ],
-                Response::HTTP_BAD_REQUEST);
+                Response::HTTP_BAD_REQUEST
+            );
         }
 
         if ($product instanceof AbstractObject) {
@@ -58,28 +60,37 @@ class ChatterController extends AdminController
 
             switch ($request->get('chatter')) {
                 case 'discord':
-                    $this->discord($product, $fields, $additionalInfo, $chatter);
+                    $message = new DiscordMessageModel($product, $fields, $additionalInfo);
+                    $this->sendMessage($message, $chatter);
 
                     break;
+
                 case 'googlechat':
-                    $this->googlechat($product, $fields, $additionalInfo, $chatter);
+                    $message = new GoogleChatMessageModel($product, $fields, $additionalInfo);
+                    $this->sendMessage($message, $chatter);
 
                     break;
+
                 case 'slack':
-                    $this->slack($product, $fields, $additionalInfo, $chatter);
+                    $message = new SlackMessageModel($product, $fields, $additionalInfo);
+                    $this->sendMessage($message, $chatter);
 
                     break;
+
                 case 'telegram':
-                    $this->telegram($product, $fields, $additionalInfo, $chatter);
+                    $message = new TelegramMessageModel($product, $fields, $additionalInfo);
+                    $this->sendMessage($message, $chatter);
 
                     break;
+
                 case 'email':
                     if (!isset($config[$class]['email_to_send'])) {
                         throw new \Exception('email_to_send must be defined in lemonmind_message config for class ' . $class);
                     }
 
                     $emailTo = $config[$class]['email_to_send'];
-                    $this->email($product, $fields, $additionalInfo, $emailTo);
+                    $emailMessage = new EmailMessageModel($product, $fields, $additionalInfo);
+                    $this->email($emailMessage, $emailTo);
 
                     break;
                 case 'sms':
@@ -88,7 +99,8 @@ class ChatterController extends AdminController
                     }
 
                     $smsTo = (string) $config[$class]['sms_to'];
-                    $this->sms($product, $fields, $additionalInfo, $smsTo, $texter);
+                    $message = new SmsMessageModel($product, $fields, $additionalInfo, $smsTo);
+                    $this->sms($message, $texter);
 
                     break;
                 default:
@@ -100,13 +112,15 @@ class ChatterController extends AdminController
                     [
                         'success' => $this->success,
                     ],
-                    Response::HTTP_OK);
+                    Response::HTTP_OK
+                );
             } else {
                 return $this->json(
                     [
                         'success' => $this->success,
                     ],
-                    Response::HTTP_BAD_REQUEST);
+                    Response::HTTP_BAD_REQUEST
+                );
             }
         } else {
             $this->success = false;
@@ -115,7 +129,8 @@ class ChatterController extends AdminController
                 [
                     'success' => $this->success,
                 ],
-                Response::HTTP_BAD_REQUEST);
+                Response::HTTP_BAD_REQUEST
+            );
         }
     }
 
@@ -135,76 +150,35 @@ class ChatterController extends AdminController
             [
                 'classes' => $classes,
             ],
-            Response::HTTP_OK);
+            Response::HTTP_OK
+        );
     }
 
-    public function discord(object $product, array $fields, string $additionalInfo, ChatterInterface $chatter): void
+    private function sendMessage(AbstractMessageModel $message, ChatterInterface $chatter): void
     {
-        $discord = new DiscordMessageModel($product, $fields, $additionalInfo);
-
         try {
-            $chatter->send($discord->create());
+            $chatter->send($message->create());
         } catch (TransportExceptionInterface $e) {
             $this->success = false;
         }
     }
 
-    public function slack(object $product, array $fields, string $additionalInfo, ChatterInterface $chatter): void
-    {
-        $slack = new SlackMessageModel($product, $fields, $additionalInfo);
 
+    public function email(EmailMessageModel $emailMessage, string $emailTo): void
+    {
         try {
-            $chatter->send($slack->create());
+            $mail = new Mail();
+            $mail->to($emailTo);
+            $mail->setSubject($emailMessage->subject());
+            $mail->html($emailMessage->body());
+            $mail->send();
         } catch (TransportExceptionInterface $e) {
             $this->success = false;
         }
     }
 
-    public function googlechat(object $product, array $fields, string $additionalInfo, ChatterInterface $chatter): void
+    public function sms(SmsMessageModel $smsMessage, TexterInterface $texter): void
     {
-        $googlechat = new GoogleChatMessageModel($product, $fields, $additionalInfo);
-
-        try {
-            $chatter->send($googlechat->create());
-        } catch (TransportExceptionInterface $e) {
-            $this->success = false;
-        }
-    }
-
-    public function telegram(object $product, array $fields, string $additionalInfo, ChatterInterface $chatter): void
-    {
-        $telegram = new TelegramMessageModel($product, $fields, $additionalInfo);
-
-        try {
-            $chatter->send($telegram->create());
-        } catch (TransportExceptionInterface $e) {
-            $this->success = false;
-        }
-    }
-
-    public function email(object $product, array $fields, string $additionalInfo, string $emailTo): void
-    {
-        if ($product instanceof AbstractObject) {
-            $emailMessage = new EmailMessageModel($product, $fields, $additionalInfo);
-
-            try {
-                $mail = new Mail();
-                $mail->to($emailTo);
-                $mail->setSubject('Object id ' . $product->getId());
-                $mail->html($emailMessage->create());
-                $mail->send();
-            } catch (TransportExceptionInterface $e) {
-                $this->success = false;
-            }
-        } else {
-            $this->success = false;
-        }
-    }
-
-    public function sms(object $product, array $fields, string $additionalInfo, string $smsTo, TexterInterface $texter): void
-    {
-        $smsMessage = new SmsMessageModel($product, $fields, $additionalInfo, $smsTo);
-
         try {
             $texter->send($smsMessage->create());
         } catch (TransportExceptionInterface $e) {

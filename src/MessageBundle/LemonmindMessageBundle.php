@@ -7,7 +7,7 @@ namespace LemonMind\MessageBundle;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 
-class LemonMindMessageBundle extends AbstractPimcoreBundle
+class LemonmindMessageBundle extends AbstractPimcoreBundle
 {
     use PackageVersionTrait;
 

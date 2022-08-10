@@ -8,6 +8,11 @@
       "name": "Pawel Filipkowski",
       "email": "p.filipkowski@lemonmind.com",
       "homepage": "https://lemonmind.com"
+    },
+    {
+      "name": "Sebastian Rychert",
+      "email": "s.rychert@lemonmind.com",
+      "homepage": "https://lemonmind.com"
     }
   ],
   "require": {
@@ -33,7 +38,7 @@
   "extra": {
     "pimcore": {
       "bundles": [
-        "LemonMind\\MessageBundle\\LemonMindMessageBundle"
+        "LemonMind\\MessageBundle\\LemonmindMessageBundle"
       ]
     }
   },

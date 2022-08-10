@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace LemonMind\MessageBundle\Model;
 
-class AbstractMessageModel
+use Symfony\Component\Notifier\Message\ChatMessage;
+
+abstract class AbstractMessageModel
 {
     protected object $product;
     protected array $fields;
@@ -16,4 +18,6 @@ class AbstractMessageModel
         $this->fields = $fields;
         $this->additionalInfo = $additionalInfo;
     }
+
+    abstract public function create(): ChatMessage;
 }

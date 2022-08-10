@@ -29,7 +29,7 @@ bin/console pimcore:bundle:enable LemonMindMessageBundle
 And finally in your config/config.yaml file you need to add
 
 ```
-lemon_mind_message:
+lemonmind_message:
     classes:
         Pimcore\Model\DataObject\YOUR_CLASS:
             fields_to_send: series,Carclass,country,price,bodystyle,manufacturer
@@ -49,12 +49,12 @@ It is possible to add multiple classes from which you can send notifications
 #### Example
 
 ```
-lemon_mind_message:
+lemonmind_message:
     classes:
         Pimcore\Model\DataObject\Car:
             fields_to_send: series,Carclass,country,price,bodystyle,manufacturer
             email_to_send: some@email.com
-            sms_to: 123456789
+            sms_to: PHONE_NUMBER
         Pimcore\Model\DataObject\Manufacturer:
             fields_to_send: name
 ```
