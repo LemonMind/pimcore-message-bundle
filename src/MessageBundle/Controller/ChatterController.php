@@ -36,7 +36,7 @@ class ChatterController extends AdminController
     {
         \Pimcore::unsetAdminMode();
 
-        $class = $container->getParameter('lemonmind_message.class_to_send');
+        $class = $request->get('classToSend');
 
         if (class_exists($class)) {
             $product = $class::getById($id);
@@ -53,8 +53,9 @@ class ChatterController extends AdminController
 
         if ($product instanceof AbstractObject) {
             $product::setGetInheritedValues(true);
+            $config = $container->getParameter('lemonmind_message');
 
-            $fields = explode(',', $container->getParameter('lemonmind_message.fields_to_send'));
+            $fields = explode(',', $config[$class]['fields_to_send']);
             $additionalInfo = $request->get('additionalInfo');
 
             switch ($request->get('chatter')) {
@@ -83,21 +84,21 @@ class ChatterController extends AdminController
                     break;
 
                 case 'email':
-                    $emailTo = $container->getParameter('lemonmind_message.email_to_send');
-
-                    if (!is_string($emailTo)) {
-                        $emailTo = '';
+                    if (!isset($config[$class]['email_to_send'])) {
+                        throw new \Exception('email_to_send must be defined in lemonmind_message config for class ' . $class);
                     }
+
+                    $emailTo = $config[$class]['email_to_send'];
                     $emailMessage = new EmailMessageModel($product, $fields, $additionalInfo);
                     $this->email($emailMessage, $emailTo);
 
                     break;
                 case 'sms':
-                    $smsTo = $container->getParameter('lemonmind_message.sms_to');
-
-                    if (!is_string($smsTo)) {
-                        $smsTo = '';
+                    if (!isset($config[$class]['sms_to'])) {
+                        throw new \Exception('sms_to must be defined in lemonmind_message config for class ' . $class);
                     }
+
+                    $smsTo = (string) $config[$class]['sms_to'];
                     $message = new SmsMessageModel($product, $fields, $additionalInfo, $smsTo);
                     $this->sms($message, $texter);
 
@@ -138,11 +139,16 @@ class ChatterController extends AdminController
      */
     public function classAction(ContainerInterface $container): Response
     {
-        $class = $container->getParameter('lemonmind_message.class_to_send');
+        $classes = [];
+        $config = $container->getParameter('lemonmind_message');
+
+        foreach ($config as $key => $value) {
+            $classes[] = $key;
+        }
 
         return $this->json(
             [
-                'class_to_send' => $class,
+                'classes' => $classes,
             ],
             Response::HTTP_OK
         );
