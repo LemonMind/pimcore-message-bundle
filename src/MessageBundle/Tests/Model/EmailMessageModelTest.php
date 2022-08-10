@@ -34,12 +34,21 @@ class EmailMessageModelTest extends KernelTestCase
 
     /**
      * @test
+     */
+    public function testSubject(): void
+    {
+        $emailMessage = new EmailMessageModel($this->testProduct, ['name'], '');
+        $this->assertEquals('Object id 1', $emailMessage->subject());
+    }
+
+    /**
+     * @test
      * @dataProvider dataProvider
      */
-    public function testCreate(array $fields, string $additionalInfo, string $expected): void
+    public function testBody(array $fields, string $additionalInfo, string $expected): void
     {
         $emailMessage = new EmailMessageModel($this->testProduct, $fields, $additionalInfo);
-        $this->assertEquals($expected, $emailMessage->create());
+        $this->assertEquals($expected, $emailMessage->body());
     }
 
     public function dataProvider(): array
