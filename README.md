@@ -30,18 +30,34 @@ And finally in your config/config.yaml file you need to add
 
 ```
 lemon_mind_message:
-    class_to_send: Pimcore\Model\DataObject\YOUR_CLASS
-    fields_to_send: series,Carclass,country,price,bodystyle,manufacturer
-    email_to_send: some@email.com
-    sms_to: PHONE_NUMBER
+    classes:
+        Pimcore\Model\DataObject\YOUR_CLASS:
+            fields_to_send: series,Carclass,country,price,bodystyle,manufacturer
+            email_to_send: some@email.com
+            sms_to: PHONE_NUMBER
 ```
 
 where:
 
-- `class_to_send` is your namespace to your class you want to send notification
+- `YOUR_CLASS:` is your class from which notifications will be sent
 - `fields_to_send` is your class fields separated with coma without space
 - `email_to_send` is e-mail you want to send notification to
 - `sms_to` is the phone number to which you want to send the notification
+
+It is possible to add multiple classes from which you can send notifications
+
+#### Example
+
+```
+lemon_mind_message:
+    classes:
+        Pimcore\Model\DataObject\Car:
+            fields_to_send: series,Carclass,country,price,bodystyle,manufacturer
+            email_to_send: some@email.com
+            sms_to: 123456789
+        Pimcore\Model\DataObject\Manufacturer:
+            fields_to_send: name
+```
 
 After correct installation button for sending the notification should be visible only in your class that you defined
 earlier
