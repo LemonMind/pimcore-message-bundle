@@ -33,7 +33,7 @@
   "extra": {
     "pimcore": {
       "bundles": [
-        "LemonMind\\MessageBundle\\LemonMindMessageBundle"
+        "LemonMind\\MessageBundle\\LemonmindMessageBundle"
       ]
     }
   },

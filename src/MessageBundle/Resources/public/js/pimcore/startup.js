@@ -1,8 +1,8 @@
-pimcore.registerNS("pimcore.plugin.LemonMindMessageBundle");
+pimcore.registerNS("pimcore.plugin.LemonmindMessageBundle");
 
-pimcore.plugin.LemonMindMessageBundle = Class.create(pimcore.plugin.admin, {
+pimcore.plugin.LemonmindMessageBundle = Class.create(pimcore.plugin.admin, {
     getClassName: function () {
-        return "pimcore.plugin.LemonMindMessageBundle";
+        return "pimcore.plugin.LemonmindMessageBundle";
     },
 
     initialize: function () {
@@ -119,4 +119,4 @@ pimcore.plugin.LemonMindMessageBundle = Class.create(pimcore.plugin.admin, {
     },
 });
 
-let LemonMindMessageBundlePlugin = new pimcore.plugin.LemonMindMessageBundle();
+let LemonmindMessageBundlePlugin = new pimcore.plugin.LemonmindMessageBundle();
