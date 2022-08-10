@@ -29,7 +29,7 @@ bin/console pimcore:bundle:enable LemonMindMessageBundle
 And finally in your config/config.yaml file you need to add
 
 ```
-lemon_mind_message:
+lemonmind_message:
     class_to_send: Pimcore\Model\DataObject\YOUR_CLASS
     fields_to_send: series,Carclass,country,price,bodystyle,manufacturer
     email_to_send: some@email.com

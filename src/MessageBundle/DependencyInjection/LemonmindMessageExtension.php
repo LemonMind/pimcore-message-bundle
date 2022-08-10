@@ -14,7 +14,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
  *
  * @see http://symfony.com/doc/current/cookbook/bundles/extension.html
  */
-class LemonMindMessageExtension extends Extension
+class LemonmindMessageExtension extends Extension
 {
     /**
      * {@inheritdoc}
@@ -25,19 +25,19 @@ class LemonMindMessageExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         if (isset($config['class_to_send'])) {
-            $container->setParameter('lemon_mind_message.class_to_send', $config['class_to_send']);
+            $container->setParameter('lemonmind_message.class_to_send', $config['class_to_send']);
         }
 
         if (isset($config['fields_to_send'])) {
-            $container->setParameter('lemon_mind_message.fields_to_send', $config['fields_to_send']);
+            $container->setParameter('lemonmind_message.fields_to_send', $config['fields_to_send']);
         }
 
         if (isset($config['email_to_send'])) {
-            $container->setParameter('lemon_mind_message.email_to_send', $config['email_to_send']);
+            $container->setParameter('lemonmind_message.email_to_send', $config['email_to_send']);
         }
 
         if (isset($config['sms_to'])) {
-            $container->setParameter('lemon_mind_message.sms_to', (string) $config['sms_to']);
+            $container->setParameter('lemonmind_message.sms_to', (string) $config['sms_to']);
         }
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));

@@ -35,7 +35,7 @@ class ChatterController extends AdminController
     {
         \Pimcore::unsetAdminMode();
 
-        $class = $container->getParameter('lemon_mind_message.class_to_send');
+        $class = $container->getParameter('lemonmind_message.class_to_send');
 
         if (class_exists($class)) {
             $product = $class::getById($id);
@@ -46,13 +46,14 @@ class ChatterController extends AdminController
                 [
                     'success' => $this->success,
                 ],
-                Response::HTTP_BAD_REQUEST);
+                Response::HTTP_BAD_REQUEST
+            );
         }
 
         if ($product instanceof AbstractObject) {
             $product::setGetInheritedValues(true);
 
-            $fields = explode(',', $container->getParameter('lemon_mind_message.fields_to_send'));
+            $fields = explode(',', $container->getParameter('lemonmind_message.fields_to_send'));
             $additionalInfo = $request->get('additionalInfo');
 
             switch ($request->get('chatter')) {
@@ -73,7 +74,7 @@ class ChatterController extends AdminController
 
                     break;
                 case 'email':
-                    $emailTo = $container->getParameter('lemon_mind_message.email_to_send');
+                    $emailTo = $container->getParameter('lemonmind_message.email_to_send');
 
                     if (!is_string($emailTo)) {
                         $emailTo = '';
@@ -82,7 +83,7 @@ class ChatterController extends AdminController
 
                     break;
                 case 'sms':
-                    $smsTo = $container->getParameter('lemon_mind_message.sms_to');
+                    $smsTo = $container->getParameter('lemonmind_message.sms_to');
 
                     if (!is_string($smsTo)) {
                         $smsTo = '';
@@ -99,13 +100,15 @@ class ChatterController extends AdminController
                     [
                         'success' => $this->success,
                     ],
-                    Response::HTTP_OK);
+                    Response::HTTP_OK
+                );
             } else {
                 return $this->json(
                     [
                         'success' => $this->success,
                     ],
-                    Response::HTTP_BAD_REQUEST);
+                    Response::HTTP_BAD_REQUEST
+                );
             }
         } else {
             $this->success = false;
@@ -114,7 +117,8 @@ class ChatterController extends AdminController
                 [
                     'success' => $this->success,
                 ],
-                Response::HTTP_BAD_REQUEST);
+                Response::HTTP_BAD_REQUEST
+            );
         }
     }
 
@@ -123,13 +127,14 @@ class ChatterController extends AdminController
      */
     public function classAction(ContainerInterface $container): Response
     {
-        $class = $container->getParameter('lemon_mind_message.class_to_send');
+        $class = $container->getParameter('lemonmind_message.class_to_send');
 
         return $this->json(
             [
                 'class_to_send' => $class,
             ],
-            Response::HTTP_OK);
+            Response::HTTP_OK
+        );
     }
 
     public function discord(object $product, array $fields, string $additionalInfo, ChatterInterface $chatter): void
