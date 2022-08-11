@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace LemonMind\MessageBundle\Controller;
 
+use Exception;
+use LemonMind\MessageBundle\Message\CreateMessage;
 use LemonMind\MessageBundle\Services\MessageService;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Model\DataObject\AbstractObject;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Notifier\ChatterInterface;
 use Symfony\Component\Notifier\TexterInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -22,7 +25,7 @@ class ChatterController extends AdminController
     /**
      * @Route("/send-notification/{id}", requirements={"id"="\d+"}))
      */
-    public function indexAction(Request $request, int $id, ChatterInterface $chatter, TexterInterface $texter, ContainerInterface $container): Response
+    public function indexAction(Request $request, int $id, ChatterInterface $chatter, TexterInterface $texter, ContainerInterface $container, MessageBusInterface $bus): Response
     {
         \Pimcore::unsetAdminMode();
 
@@ -43,9 +46,14 @@ class ChatterController extends AdminController
         $fields = explode(',', $config[$class]['fields_to_send']);
         $additionalInfo = $request->get('additionalInfo');
 
-        $success = MessageService::create($request->get('chatter'), $product, $class, $fields, $additionalInfo, $config, $chatter, $texter);
-
-        return $this->returnAction($success);
+        //$success = MessageService::create($request->get('chatter'), $product, $class, $fields, $additionalInfo, $config, $chatter, $texter);
+        try {
+            $bus->dispatch(new CreateMessage($request->get('chatter'), $product, $class, $fields, $additionalInfo, $config, $chatter, $texter));
+        } catch (Exception $e) {
+            $this->addFlash('error', 'nie dziala');
+        }
+        dd($container);
+        return $this->returnAction(true);
     }
 
     /**

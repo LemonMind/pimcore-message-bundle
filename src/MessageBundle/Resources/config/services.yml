@@ -8,3 +8,7 @@ services:
         resource: '../../Controller'
         public: true
         tags: [ 'controller.service_arguments' ]
+
+    LemonMind\MessageBundle\MessageHandler\CreateMessageMessageHandler:
+        tags:
+            - { name: messenger.message_handler }
