@@ -76,7 +76,7 @@ class MessageService
         return $success;
     }
 
-    private static function sendMessage(AbstractMessageModel $message, ChatterInterface $chatter): bool
+    private static function sendMessage(AbstractMessageModel $message, ?ChatterInterface $chatter): bool
     {
         if (is_null($chatter)) {
             throw new Exception('texter service not provided');
@@ -106,7 +106,7 @@ class MessageService
         return true;
     }
 
-    public static function sms(SmsMessageModel $smsMessage, TexterInterface $texter): bool
+    public static function sms(SmsMessageModel $smsMessage, ?TexterInterface $texter): bool
     {
         if (is_null($texter)) {
             throw new Exception('texter service not provided');
