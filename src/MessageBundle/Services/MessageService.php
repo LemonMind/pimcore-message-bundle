@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LemonMind\MessageBundle\Services;
 
+use Exception;
 use LemonMind\MessageBundle\Model\AbstractMessageModel;
 use LemonMind\MessageBundle\Model\DiscordMessageModel;
 use LemonMind\MessageBundle\Model\EmailMessageModel;
@@ -19,32 +20,32 @@ use Symfony\Component\Notifier\TexterInterface;
 
 class MessageService
 {
-    public static function create(string $request, AbstractObject $product, string $class, array $fields, string $additionalInfo, array $config, ChatterInterface $chatter, TexterInterface $texter): bool
+    public static function create(string $request, AbstractObject $product, string $class, array $fields, string $additionalInfo, array $config, ?ChatterInterface $chatter, ?TexterInterface $texter): bool
     {
-        $success = true;
+        $success = false;
 
         switch ($request) {
             case 'discord':
                 $message = new DiscordMessageModel($product, $fields, $additionalInfo);
-                self::sendMessage($message, $chatter);
+                $success = self::sendMessage($message, $chatter);
 
                 break;
 
             case 'googlechat':
                 $message = new GoogleChatMessageModel($product, $fields, $additionalInfo);
-                self::sendMessage($message, $chatter);
+                $success = self::sendMessage($message, $chatter);
 
                 break;
 
             case 'slack':
                 $message = new SlackMessageModel($product, $fields, $additionalInfo);
-                self::sendMessage($message, $chatter);
+                $success = self::sendMessage($message, $chatter);
 
                 break;
 
             case 'telegram':
                 $message = new TelegramMessageModel($product, $fields, $additionalInfo);
-                self::sendMessage($message, $chatter);
+                $success = self::sendMessage($message, $chatter);
 
                 break;
 
@@ -55,7 +56,7 @@ class MessageService
 
                 $emailTo = $config[$class]['email_to_send'];
                 $emailMessage = new EmailMessageModel($product, $fields, $additionalInfo);
-                self::email($emailMessage, $emailTo);
+                $success = self::email($emailMessage, $emailTo);
 
                 break;
             case 'sms':
@@ -65,7 +66,7 @@ class MessageService
 
                 $smsTo = (string) $config[$class]['sms_to'];
                 $message = new SmsMessageModel($product, $fields, $additionalInfo, $smsTo);
-                self::sms($message, $texter);
+                $success = self::sms($message, $texter);
 
                 break;
             default:
@@ -75,16 +76,22 @@ class MessageService
         return $success;
     }
 
-    private static function sendMessage(AbstractMessageModel $message, ChatterInterface $chatter): void
+    private static function sendMessage(AbstractMessageModel $message, ChatterInterface $chatter): bool
     {
+        if (is_null($chatter)) {
+            throw new Exception('texter service not provided');
+        }
+
         try {
             $chatter->send($message->create());
         } catch (TransportExceptionInterface $e) {
-            $success = false;
+            return false;
         }
+
+        return true;
     }
 
-    public static function email(EmailMessageModel $emailMessage, string $emailTo): void
+    public static function email(EmailMessageModel $emailMessage, string $emailTo): bool
     {
         try {
             $mail = new Mail();
@@ -93,16 +100,24 @@ class MessageService
             $mail->html($emailMessage->body());
             $mail->send();
         } catch (TransportExceptionInterface $e) {
-            $success = false;
+            return false;
         }
+
+        return true;
     }
 
-    public static function sms(SmsMessageModel $smsMessage, TexterInterface $texter): void
+    public static function sms(SmsMessageModel $smsMessage, TexterInterface $texter): bool
     {
+        if (is_null($texter)) {
+            throw new Exception('texter service not provided');
+        }
+
         try {
             $texter->send($smsMessage->create());
         } catch (TransportExceptionInterface $e) {
-            $success = false;
+            return false;
         }
+
+        return true;
     }
 }

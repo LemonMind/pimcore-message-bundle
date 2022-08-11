@@ -18,6 +18,8 @@ pimcore.plugin.LemonmindMessageBundle = Class.create(pimcore.plugin.admin, {
                 let data = Ext.decode(response.responseText);
                 let objectClasses = object.data.general.php.classes;
 
+                console.log(response);
+
                 function contains(value) {
                     for (let i = 0; i < data.classes.length; i++) {
                         if (value.includes(data.classes[i])) {
@@ -92,11 +94,11 @@ pimcore.plugin.LemonmindMessageBundle = Class.create(pimcore.plugin.admin, {
                                             allowBlank: true,
                                             margin: '5'
                                         },
-                                            {
-                                                xtype: 'hiddenfield',
-                                                name: 'classToSend',
-                                                value: classToSend,
-                                            }
+                                        {
+                                            xtype: 'hiddenfield',
+                                            name: 'classToSend',
+                                            value: classToSend,
+                                        }
                                         ],
 
                                         buttons: [{
