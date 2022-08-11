@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LemonMind\MessageBundle\Controller;
 
+use Exception;
 use LemonMind\MessageBundle\Model\AbstractMessageModel;
 use LemonMind\MessageBundle\Model\DiscordMessageModel;
 use LemonMind\MessageBundle\Model\EmailMessageModel;
@@ -28,11 +29,23 @@ use Symfony\Component\Routing\Annotation\Route;
 class ChatterController extends AdminController
 {
     private bool $success = true;
+    protected ?ChatterInterface $chatter = null;
+    protected ?TexterInterface $texter = null;
+
+    public function setTexter(mixed $texter): void
+    {
+        $this->texter = $texter;
+    }
+
+    public function setChatter(mixed $chatter): void
+    {
+        $this->chatter = $chatter;
+    }
 
     /**
      * @Route("/send-notification/{id}", requirements={"id"="\d+"}))
      */
-    public function indexAction(Request $request, int $id, ChatterInterface $chatter, TexterInterface $texter, ContainerInterface $container): Response
+    public function indexAction(Request $request, int $id, ContainerInterface $container): Response
     {
         \Pimcore::unsetAdminMode();
 
@@ -61,25 +74,25 @@ class ChatterController extends AdminController
             switch ($request->get('chatter')) {
                 case 'discord':
                     $message = new DiscordMessageModel($product, $fields, $additionalInfo);
-                    $this->sendMessage($message, $chatter);
+                    $this->sendMessage($message);
 
                     break;
 
                 case 'googlechat':
                     $message = new GoogleChatMessageModel($product, $fields, $additionalInfo);
-                    $this->sendMessage($message, $chatter);
+                    $this->sendMessage($message);
 
                     break;
 
                 case 'slack':
                     $message = new SlackMessageModel($product, $fields, $additionalInfo);
-                    $this->sendMessage($message, $chatter);
+                    $this->sendMessage($message);
 
                     break;
 
                 case 'telegram':
                     $message = new TelegramMessageModel($product, $fields, $additionalInfo);
-                    $this->sendMessage($message, $chatter);
+                    $this->sendMessage($message);
 
                     break;
 
@@ -100,7 +113,7 @@ class ChatterController extends AdminController
 
                     $smsTo = (string) $config[$class]['sms_to'];
                     $message = new SmsMessageModel($product, $fields, $additionalInfo, $smsTo);
-                    $this->sms($message, $texter);
+                    $this->sms($message);
 
                     break;
                 default:
@@ -154,12 +167,20 @@ class ChatterController extends AdminController
         );
     }
 
-    private function sendMessage(AbstractMessageModel $message, ChatterInterface $chatter): void
+    private function sendMessage(AbstractMessageModel $message): void
     {
+        if (is_null($this->chatter)) {
+            $this->success = false;
+
+            throw new Exception('chatter service not provided');
+        }
+
         try {
-            $chatter->send($message->create());
+            $this->chatter->send($message->create());
         } catch (TransportExceptionInterface $e) {
             $this->success = false;
+        } finally {
+            $this->chatter = null;
         }
     }
 
@@ -176,12 +197,20 @@ class ChatterController extends AdminController
         }
     }
 
-    public function sms(SmsMessageModel $smsMessage, TexterInterface $texter): void
+    public function sms(SmsMessageModel $smsMessage): void
     {
+        if (is_null($this->texter)) {
+            $this->success = false;
+
+            throw new Exception('texter service not provided');
+        }
+
         try {
-            $texter->send($smsMessage->create());
+            $this->texter->send($smsMessage->create());
         } catch (TransportExceptionInterface $e) {
             $this->success = false;
+        } finally {
+            $this->texter = null;
         }
     }
 }
