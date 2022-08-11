@@ -70,12 +70,16 @@ class ChatterController extends AdminController
         $config = $container->getParameter('lemonmind_message');
 
         foreach ($config as $key => $value) {
+            if ($key === 'allowed_chatters') {
+                continue;
+            }
             $classes[] = $key;
         }
 
         return $this->json(
             [
                 'classes' => $classes,
+                'allowed_chatters' => $config['allowed_chatters']
             ],
             Response::HTTP_OK
         );
