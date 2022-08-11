@@ -19,10 +19,23 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ChatterController extends AdminController
 {
+    protected ?ChatterInterface $chatter = null;
+    protected ?TexterInterface $texter = null;
+
+    public function setTexter(mixed $texter): void
+    {
+        $this->texter = $texter;
+    }
+
+    public function setChatter(mixed $chatter): void
+    {
+        $this->chatter = $chatter;
+    }
+
     /**
      * @Route("/send-notification/{id}", requirements={"id"="\d+"}))
      */
-    public function indexAction(Request $request, int $id, ChatterInterface $chatter, TexterInterface $texter, ContainerInterface $container): Response
+    public function indexAction(Request $request, int $id, ContainerInterface $container): Response
     {
         \Pimcore::unsetAdminMode();
 
@@ -43,7 +56,7 @@ class ChatterController extends AdminController
         $fields = explode(',', $config[$class]['fields_to_send']);
         $additionalInfo = $request->get('additionalInfo');
 
-        $success = MessageService::create($request->get('chatter'), $product, $class, $fields, $additionalInfo, $config, $chatter, $texter);
+        $success = MessageService::create($request->get('chatter'), $product, $class, $fields, $additionalInfo, $config, $this->chatter, $this->texter);
 
         return $this->returnAction($success);
     }
