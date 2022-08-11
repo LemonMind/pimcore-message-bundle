@@ -39,6 +39,10 @@ class SlackMessageModelTest extends KernelTestCase
     {
         $slackMessage = new SlackMessageModel($this->testProduct, ['name'], '');
         $chatMessage = $slackMessage->create();
+
+        if (is_null($chatMessage->getOptions())) {
+            throw new \Exception('options is null');
+        }
         $messageArray = $chatMessage->getOptions()->toArray();
         $this->assertEquals('header', $messageArray['blocks'][0]['type']);
         $this->assertEquals('Object id 1', $messageArray['blocks'][0]['text']['text']);
@@ -52,6 +56,10 @@ class SlackMessageModelTest extends KernelTestCase
     {
         $slackMessage = new SlackMessageModel($this->testProduct, $fields, $additionalInfo);
         $chatMessage = $slackMessage->create();
+
+        if (is_null($chatMessage->getOptions())) {
+            throw new \Exception('options is null');
+        }
         $messageArray = $chatMessage->getOptions()->toArray();
 
         $x = 0;
