@@ -15,14 +15,13 @@ pimcore.plugin.LemonmindMessageBundle = Class.create(pimcore.plugin.admin, {
         Ext.Ajax.request({
             url: '/admin/chatter/class',
             success: function (response) {
-                let data = Ext.decode(response.responseText);
+                let responseData = Ext.decode(response.responseText);
                 let objectClasses = object.data.general.php.classes;
-
-                console.log(response);
+                const allowed_chatters = responseData.allowed_chatters.split(',')
 
                 function contains(value) {
-                    for (let i = 0; i < data.classes.length; i++) {
-                        if (value.includes(data.classes[i])) {
+                    for (let i = 0; i < responseData.classes.length; i++) {
+                        if (value.includes(responseData.classes[i])) {
                             return value
                         }
                     }
@@ -36,6 +35,33 @@ pimcore.plugin.LemonmindMessageBundle = Class.create(pimcore.plugin.admin, {
                         iconCls: 'pimcore_icon_comments',
                         scale: 'small',
                         handler: function (obj) {
+                            const allowedData = [
+                                {
+                                    value: 'discord',
+                                    optionName: 'Discord'
+                                },
+                                {
+                                    value: 'googlechat',
+                                    optionName: 'Google Chat'
+                                },
+                                {
+                                    value: 'slack',
+                                    optionName: 'Slack'
+                                },
+                                {
+                                    value: 'telegram',
+                                    optionName: 'Telegram'
+                                },
+                                {
+                                    value: 'email',
+                                    optionName: 'Email'
+                                },
+                                {
+                                    value: 'sms',
+                                    optionName: 'Sms'
+                                },
+                            ]
+
                             let modal = new Ext.Window({
                                 title: 'Send notification',
                                 modal: true,
@@ -55,32 +81,7 @@ pimcore.plugin.LemonmindMessageBundle = Class.create(pimcore.plugin.admin, {
                                             fieldLabel: 'Select chatter:',
                                             store: Ext.create('Ext.data.Store', {
                                                 fields: ['optionName', 'value'],
-                                                data: [
-                                                    {
-                                                        value: 'discord',
-                                                        optionName: 'Discord'
-                                                    },
-                                                    {
-                                                        value: 'googlechat',
-                                                        optionName: 'Google Chat'
-                                                    },
-                                                    {
-                                                        value: 'slack',
-                                                        optionName: 'Slack'
-                                                    },
-                                                    {
-                                                        value: 'telegram',
-                                                        optionName: 'Telegram'
-                                                    },
-                                                    {
-                                                        value: 'email',
-                                                        optionName: 'Email'
-                                                    },
-                                                    {
-                                                        value: 'sms',
-                                                        optionName: 'Sms'
-                                                    },
-                                                ]
+                                                data: allowedData.filter(d => allowed_chatters.some(e => e === d.value))
                                             }),
                                             emptyText: 'Select one...',
                                             displayField: 'optionName',

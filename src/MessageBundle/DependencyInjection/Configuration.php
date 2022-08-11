@@ -15,19 +15,21 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder('lemonmind_message');
+        $rootNode = $treeBuilder->getRootNode();
 
-        $treeBuilder->getRootNode()
+        $rootNode
             ->children()
-            ->arrayNode('classes')
-            ->arrayPrototype()
-            ->children()
-            ->scalarNode('fields_to_send')->end()
-            ->scalarNode('email_to_send')->end()
-            ->scalarNode('sms_to')->end()
+                ->scalarNode('allowed_chatters')->end()
+                ->arrayNode('classes')
+                ->arrayPrototype()
+                    ->children()
+                        ->scalarNode('fields_to_send')->end()
+                        ->scalarNode('email_to_send')->end()
+                        ->scalarNode('sms_to')->end()
+                    ->end()
+                ->end()
             ->end()
-            ->end()
-            ->end()
-            ->end();
+        ->end();
 
         return $treeBuilder;
     }
