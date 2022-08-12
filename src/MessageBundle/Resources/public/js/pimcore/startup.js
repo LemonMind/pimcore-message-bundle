@@ -6,6 +6,9 @@ document.addEventListener(pimcore.events.postOpenObject, async (e) => {
 
     const objectClass = e.detail.object.data.general.o_className;
 
+    if (!objectClass) {
+        return
+    }
 
     const classToSend = allowedClasses.find(element => {
         if (element.toLowerCase().includes(objectClass.toLowerCase())) {
