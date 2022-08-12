@@ -6,11 +6,14 @@ namespace LemonMind\MessageBundle\Controller;
 
 use Exception;
 use LemonMind\MessageBundle\Message\CreateNotification;
+use LemonMind\MessageBundle\Services\MessageService;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Model\DataObject\AbstractObject;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Notifier\ChatterInterface;
+use Symfony\Component\Notifier\TexterInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -19,6 +22,19 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ChatterController extends AdminController
 {
+    protected ?ChatterInterface $chatter = null;
+    protected ?TexterInterface $texter = null;
+
+    public function setTexter(mixed $texter): void
+    {
+        $this->texter = $texter;
+    }
+
+    public function setChatter(mixed $chatter): void
+    {
+        $this->chatter = $chatter;
+    }
+
     /**
      * @Route("/send-notification/{id}", requirements={"id"="\d+"}))
      */
@@ -61,12 +77,16 @@ class ChatterController extends AdminController
         $config = $container->getParameter('lemonmind_message');
 
         foreach ($config as $key => $value) {
+            if ($key === 'allowed_chatters') {
+                continue;
+            }
             $classes[] = $key;
         }
 
         return $this->json(
             [
                 'classes' => $classes,
+                'allowed_chatters' => $config['allowed_chatters']
             ],
             Response::HTTP_OK
         );

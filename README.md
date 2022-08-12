@@ -30,6 +30,7 @@ And finally in your config/config.yaml file you need to add
 
 ```
 lemonmind_message:
+    allowed_chatters: googlechat,discord,slack,telegram,email,sms
     classes:
         Pimcore\Model\DataObject\YOUR_CLASS:
             fields_to_send: series,Carclass,country,price,bodystyle,manufacturer
@@ -44,12 +45,14 @@ where:
 - `email_to_send` is e-mail you want to send notification to
 - `sms_to` is the phone number to which you want to send the notification
 
-It is possible to add multiple classes from which you can send notifications
+It is possible to add multiple classes from which you can send notifications <br />
+You need to specify which chatters should be available using `allowed chatters` option
 
 #### Example
 
 ```
 lemonmind_message:
+    allowed_chatters: googlechat,discord,slack,telegram,email,sms
     classes:
         Pimcore\Model\DataObject\Car:
             fields_to_send: series,Carclass,country,price,bodystyle,manufacturer
