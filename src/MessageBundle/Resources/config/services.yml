@@ -9,6 +9,9 @@ services:
         public: true
         tags: [ 'controller.service_arguments' ]
 
-    LemonMind\MessageBundle\MessageHandler\CreateMessageMessageHandler:
+    LemonMind\MessageBundle\MessageHandler\CreateNotificationMessageHandler:
         tags:
             - { name: messenger.message_handler }
+        calls:
+            -   setTexter: [ '@?texter' ]
+            -   setChatter: [ '@?chatter' ]
