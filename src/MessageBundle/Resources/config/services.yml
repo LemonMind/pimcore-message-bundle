@@ -8,9 +8,6 @@ services:
         resource: '../../Controller'
         public: true
         tags: [ 'controller.service_arguments' ]
-        calls:
-            - setTexter: ['@?texter']
-            - setChatter: ['@?chatter']
 
     LemonMind\MessageBundle\MessageHandler\CreateNotificationMessageHandler:
         tags:
