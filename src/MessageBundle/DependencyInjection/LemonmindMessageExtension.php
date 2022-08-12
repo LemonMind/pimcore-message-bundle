@@ -20,7 +20,9 @@ class LemonmindMessageExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
         $lemonmindMessageConfig = [];
 
-        $lemonmindMessageConfig['allowed_chatters'] = $config['allowed_chatters'];
+        if (isset($config['allowed_chatters'])) {
+            $lemonmindMessageConfig['allowed_chatters'] = $config['allowed_chatters'];
+        }
 
         foreach ($config['classes'] as $keys => $values) {
             $arr = [];
