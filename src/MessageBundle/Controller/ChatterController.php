@@ -12,8 +12,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Notifier\ChatterInterface;
-use Symfony\Component\Notifier\TexterInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -21,19 +19,6 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ChatterController extends AdminController
 {
-    protected ?ChatterInterface $chatter = null;
-    protected ?TexterInterface $texter = null;
-
-    public function setTexter(mixed $texter): void
-    {
-        $this->texter = $texter;
-    }
-
-    public function setChatter(mixed $chatter): void
-    {
-        $this->chatter = $chatter;
-    }
-
     /**
      * @Route("/send-notification/{id}", requirements={"id"="\d+"}))
      */
@@ -44,13 +29,13 @@ class ChatterController extends AdminController
         $class = $request->get('classToSend');
 
         if (!class_exists($class)) {
-            return $this->returnAction(false);
+            return $this->returnAction(false, 'Class does not exist');
         }
 
         $product = $class::getById($id);
 
         if (!$product instanceof AbstractObject) {
-            return $this->returnAction(false);
+            return $this->returnAction(false, 'Product is not an instance of AbstractObject');
         }
         $product::setGetInheritedValues(true);
         $config = $container->getParameter('lemonmind_message');
@@ -61,10 +46,10 @@ class ChatterController extends AdminController
         try {
             $bus->dispatch(new CreateNotification($request->get('chatter'), $id, $class, $fields, $additionalInfo, $config));
         } catch (Exception $e) {
-            $this->returnAction(false);
+            return $this->returnAction(false, $e->getMessage());
         }
 
-        return $this->returnAction(true);
+        return $this->returnAction(true, '');
     }
 
     /**
@@ -91,11 +76,12 @@ class ChatterController extends AdminController
         );
     }
 
-    public function returnAction(bool $success): Response
+    public function returnAction(bool $success, string $msg): Response
     {
         return $this->json(
             [
                 'success' => $success,
+                'msg' => $msg,
             ],
             $success ? Response::HTTP_OK : Response::HTTP_BAD_REQUEST
         );

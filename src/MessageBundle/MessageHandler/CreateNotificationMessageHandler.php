@@ -6,12 +6,8 @@ namespace LemonMind\MessageBundle\MessageHandler;
 
 use LemonMind\MessageBundle\Message\CreateNotification;
 use LemonMind\MessageBundle\Model\AbstractMessageModel;
-use LemonMind\MessageBundle\Model\DiscordMessageModel;
 use LemonMind\MessageBundle\Model\EmailMessageModel;
-use LemonMind\MessageBundle\Model\GoogleChatMessageModel;
-use LemonMind\MessageBundle\Model\SlackMessageModel;
 use LemonMind\MessageBundle\Model\SmsMessageModel;
-use LemonMind\MessageBundle\Model\TelegramMessageModel;
 use Pimcore\Mail;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 use Symfony\Component\Notifier\ChatterInterface;
@@ -37,41 +33,26 @@ class CreateNotificationMessageHandler implements MessageHandlerInterface
     {
         $config = $createMessage->getConfig();
         $product = $createMessage->getClass()::getById($createMessage->getProductId());
+        $selectedChatter = $createMessage->getSelectedChatter();
+        $prefix = "\LemonMind\MessageBundle\Model";
+        $classNames = [
+            'googlechat' => '\GoogleChatMessageModel',
+            'discord' => '\DiscordMessageModel',
+            'slack' => '\SlackMessageModel',
+            'telegram' => '\TelegramMessageModel',
+        ];
 
-        switch ($createMessage->getSelectedChatter()) {
+        switch ($selectedChatter) {
             case 'discord':
-                $message = new DiscordMessageModel($product, $createMessage->getFields(), $createMessage->getAdditionalInfo());
-
-                if (null !== $this->chatter) {
-                    $this->sendMessage($message, $this->chatter);
-                }
-
-                break;
-
             case 'googlechat':
-                $message = new GoogleChatMessageModel($product, $createMessage->getFields(), $createMessage->getAdditionalInfo());
-
-                if (null !== $this->chatter) {
-                    $this->sendMessage($message, $this->chatter);
-                }
-
-                break;
-
             case 'slack':
-                $message = new SlackMessageModel($product, $createMessage->getFields(), $createMessage->getAdditionalInfo());
-
-                if (null !== $this->chatter) {
-                    $this->sendMessage($message, $this->chatter);
-                }
-
-                break;
-
             case 'telegram':
-                $message = new TelegramMessageModel($product, $createMessage->getFields(), $createMessage->getAdditionalInfo());
+                $class_name = "$prefix$classNames[$selectedChatter]";
 
-                if (null !== $this->chatter) {
-                    $this->sendMessage($message, $this->chatter);
-                }
+                /** @var AbstractMessageModel */
+                $message = new $class_name($product, $createMessage->getFields(), $createMessage->getAdditionalInfo());
+
+                $this->sendMessage($message, $this->chatter);
 
                 break;
 
@@ -93,18 +74,20 @@ class CreateNotificationMessageHandler implements MessageHandlerInterface
                 $smsTo = (string) $config[$createMessage->getClass()]['sms_to'];
                 $message = new SmsMessageModel($product, $createMessage->getFields(), $createMessage->getAdditionalInfo(), $smsTo);
 
-                if (null !== $this->texter) {
-                    $this->sms($message, $this->texter);
-                }
+                $this->sms($message, $this->texter);
 
                 break;
             default:
-                throw new \Exception('Error getting chatter');
+                throw new \Exception('No matching chatter');
         }
     }
 
-    public function sendMessage(AbstractMessageModel $message, ChatterInterface $chatter): void
+    public function sendMessage(AbstractMessageModel $message, ?ChatterInterface $chatter): void
     {
+        if (is_null($chatter)) {
+            throw new \Exception('Error getting chatter');
+        }
+
         try {
             $chatter->send($message->create());
         } catch (TransportExceptionInterface $e) {
@@ -123,8 +106,12 @@ class CreateNotificationMessageHandler implements MessageHandlerInterface
         }
     }
 
-    public function sms(SmsMessageModel $message, TexterInterface $texter): void
+    public function sms(SmsMessageModel $message, ?TexterInterface $texter): void
     {
+        if (is_null($texter)) {
+            throw new \Exception('Error getting texter');
+        }
+
         try {
             $texter->send($message->create());
         } catch (TransportExceptionInterface $e) {
