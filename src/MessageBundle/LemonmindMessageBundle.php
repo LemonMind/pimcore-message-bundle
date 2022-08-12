@@ -11,6 +11,8 @@ class LemonmindMessageBundle extends AbstractPimcoreBundle
     public function getJsPaths()
     {
         return [
+            '/bundles/lemonmindmessage/js/pimcore/allowedData.js',
+            '/bundles/lemonmindmessage/js/pimcore/getAjax.js',
             '/bundles/lemonmindmessage/js/pimcore/startup.js',
         ];
     }
