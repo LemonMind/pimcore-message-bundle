@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace LemonMind\MessageBundle\Controller;
 
-use LemonMind\MessageBundle\Services\MessageService;
+use Exception;
+use LemonMind\MessageBundle\Message\CreateNotification;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Model\DataObject\AbstractObject;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Notifier\ChatterInterface;
 use Symfony\Component\Notifier\TexterInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -35,7 +37,7 @@ class ChatterController extends AdminController
     /**
      * @Route("/send-notification/{id}", requirements={"id"="\d+"}))
      */
-    public function indexAction(Request $request, int $id, ContainerInterface $container): Response
+    public function indexAction(Request $request, int $id, ContainerInterface $container, MessageBusInterface $bus): Response
     {
         \Pimcore::unsetAdminMode();
 
@@ -56,9 +58,13 @@ class ChatterController extends AdminController
         $fields = explode(',', $config[$class]['fields_to_send']);
         $additionalInfo = $request->get('additionalInfo');
 
-        $success = MessageService::create($request->get('chatter'), $product, $class, $fields, $additionalInfo, $config, $this->chatter, $this->texter);
+        try {
+            $bus->dispatch(new CreateNotification($request->get('chatter'), $id, $class, $fields, $additionalInfo, $config));
+        } catch (Exception $e) {
+            $this->returnAction(false);
+        }
 
-        return $this->returnAction($success);
+        return $this->returnAction(true);
     }
 
     /**
@@ -70,7 +76,7 @@ class ChatterController extends AdminController
         $config = $container->getParameter('lemonmind_message');
 
         foreach ($config as $key => $value) {
-            if ($key === 'allowed_chatters') {
+            if ('allowed_chatters' === $key) {
                 continue;
             }
             $classes[] = $key;
@@ -79,7 +85,7 @@ class ChatterController extends AdminController
         return $this->json(
             [
                 'classes' => $classes,
-                'allowed_chatters' => $config['allowed_chatters']
+                'allowed_chatters' => $config['allowed_chatters'],
             ],
             Response::HTTP_OK
         );
@@ -87,20 +93,11 @@ class ChatterController extends AdminController
 
     public function returnAction(bool $success): Response
     {
-        if ($success) {
-            return $this->json(
-                [
-                    'success' => $success,
-                ],
-                Response::HTTP_OK
-            );
-        }
-
         return $this->json(
             [
                 'success' => $success,
             ],
-            Response::HTTP_BAD_REQUEST
+            $success ? Response::HTTP_OK : Response::HTTP_BAD_REQUEST
         );
     }
 }

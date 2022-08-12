@@ -68,7 +68,44 @@ earlier
 
 When you click at the button a modal should pop up where you can select where you want to send notification and add
 additional information to the message.
+
 ![](docs/img_modal.png)
+
+-----------
+
+## Asynchronous messages
+
+MessageBundle can send asynchronous messages
+via [Symfony Messenger Component](https://symfony.com/doc/current/messenger.html).
+To do that in your config/config.yaml file you need to add lines below
+
+```
+framework:
+    messenger:
+        transports:
+            async: "%env(MESSENGER_TRANSPORT_DSN)%"
+        routing:
+            'LemonMind\MessageBundle\Message\CreateNotification': async
+```
+
+Also in your .env file you need to add
+
+```
+MESSENGER_TRANSPORT_DSN=doctrine://default
+```
+
+where:
+
+- `MESSENGER_TRANSPORT_DSN` is your messenger transport dsn. It can be redis, RabbitMQ or database
+
+Finally, you need to start consuming messages. To do this in your php container, run this command
+
+```
+php bin/console messenger:consume async
+```
+
+It is not recommended to keep this process for a long time. It's better to
+use [supervisord](https://symfony.com/doc/current/messenger.html#supervisor-configuration).
 
 -----------
 

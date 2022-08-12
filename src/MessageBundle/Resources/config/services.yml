@@ -11,3 +11,10 @@ services:
         calls:
             - setTexter: ['@?texter']
             - setChatter: ['@?chatter']
+
+    LemonMind\MessageBundle\MessageHandler\CreateNotificationMessageHandler:
+        tags:
+            - { name: messenger.message_handler }
+        calls:
+            -   setTexter: [ '@?texter' ]
+            -   setChatter: [ '@?chatter' ]
