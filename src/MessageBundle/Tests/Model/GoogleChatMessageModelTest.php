@@ -5,19 +5,16 @@ declare(strict_types=1);
 namespace LemonMind\MessageBundle\Tests;
 
 use LemonMind\MessageBundle\Model\GoogleChatMessageModel;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Test\KernelTestCase;
 
 class GoogleChatMessageModelTest extends KernelTestCase
 {
-    /**
-     * @var AbstractProduct
-     */
-    private $testProduct;
+    private AbstractObject $testObject;
 
     protected function setUp(): void
     {
-        $this->testProduct = new class() extends AbstractProduct {
+        $this->testObject = new class() extends AbstractObject {
             public function getId(): int
             {
                 return 1;
@@ -40,7 +37,7 @@ class GoogleChatMessageModelTest extends KernelTestCase
      */
     public function testHeader(): void
     {
-        $googleMessage = new GoogleChatMessageModel($this->testProduct, [], '');
+        $googleMessage = new GoogleChatMessageModel($this->testObject, [], '');
         $options = $googleMessage->create()->getOptions();
 
         if (!is_null($options)) {
@@ -59,7 +56,7 @@ class GoogleChatMessageModelTest extends KernelTestCase
      */
     public function testAdditionalInfoWidget(array $fields, string $additionalInfo, array $expected): void
     {
-        $googleMessage = new GoogleChatMessageModel($this->testProduct, [], $additionalInfo);
+        $googleMessage = new GoogleChatMessageModel($this->testObject, [], $additionalInfo);
         $options = $googleMessage->create()->getOptions();
 
         if (!is_null($options)) {
@@ -90,7 +87,7 @@ class GoogleChatMessageModelTest extends KernelTestCase
      */
     public function testDataWidget(array $fields, string $additionalInfo, array $expected): void
     {
-        $googleMessage = new GoogleChatMessageModel($this->testProduct, $fields, $additionalInfo);
+        $googleMessage = new GoogleChatMessageModel($this->testObject, $fields, $additionalInfo);
         $options = $googleMessage->create()->getOptions();
 
         if (!is_null($options)) {

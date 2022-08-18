@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace LemonMind\MessageBundle\Tests\Model;
 
-use App\Model\Product\AbstractProduct;
 use LemonMind\MessageBundle\Model\EmailMessageModel;
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Test\KernelTestCase;
 
 class EmailMessageModelTest extends KernelTestCase
 {
-    private AbstractProduct $testProduct;
+    private AbstractObject $testObject;
 
     protected function setUp(): void
     {
-        $this->testProduct = new class() extends AbstractProduct {
+        $this->testObject = new class() extends AbstractObject {
             public function getId(): int
             {
                 return 1;
@@ -37,7 +37,7 @@ class EmailMessageModelTest extends KernelTestCase
      */
     public function testSubject(): void
     {
-        $emailMessage = new EmailMessageModel($this->testProduct, ['name'], '');
+        $emailMessage = new EmailMessageModel($this->testObject, ['name'], '');
         $this->assertEquals('Object id 1', $emailMessage->subject());
     }
 
@@ -47,7 +47,7 @@ class EmailMessageModelTest extends KernelTestCase
      */
     public function testBody(array $fields, string $additionalInfo, string $expected): void
     {
-        $emailMessage = new EmailMessageModel($this->testProduct, $fields, $additionalInfo);
+        $emailMessage = new EmailMessageModel($this->testObject, $fields, $additionalInfo);
         $this->assertEquals($expected, $emailMessage->body());
     }
 

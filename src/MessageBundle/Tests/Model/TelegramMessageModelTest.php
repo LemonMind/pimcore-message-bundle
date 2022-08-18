@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace LemonMind\MessageBundle\Tests\Model;
 
-use App\Model\Product\AbstractProduct;
 use LemonMind\MessageBundle\Model\TelegramMessageModel;
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Test\KernelTestCase;
 
 class TelegramMessageModelTest extends KernelTestCase
 {
-    private AbstractProduct $testProduct;
+    private AbstractObject $testObject;
 
     protected function setUp(): void
     {
-        $this->testProduct = new class() extends AbstractProduct {
+        $this->testObject = new class() extends AbstractObject {
             public function getId(): int
             {
                 return 1;
@@ -38,7 +38,7 @@ class TelegramMessageModelTest extends KernelTestCase
      */
     public function testCreate(array $fields, string $additionalInfo, string $expected): void
     {
-        $telegramMessage = new TelegramMessageModel($this->testProduct, $fields, $additionalInfo);
+        $telegramMessage = new TelegramMessageModel($this->testObject, $fields, $additionalInfo);
         $chatMessage = $telegramMessage->create();
         $this->assertEquals($expected, $chatMessage->getSubject());
     }
@@ -48,7 +48,7 @@ class TelegramMessageModelTest extends KernelTestCase
      */
     public function testTransport(): void
     {
-        $telegramMessage = new TelegramMessageModel($this->testProduct, ['name'], '');
+        $telegramMessage = new TelegramMessageModel($this->testObject, ['name'], '');
         $chatMessage = $telegramMessage->create();
         $this->assertEquals('telegram', $chatMessage->getTransport());
     }

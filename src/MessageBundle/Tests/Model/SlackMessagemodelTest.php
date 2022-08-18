@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace LemonMind\MessageBundle\Tests\Model;
 
-use App\Model\Product\AbstractProduct;
 use LemonMind\MessageBundle\Model\SlackMessageModel;
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Test\KernelTestCase;
 
 class SlackMessageModelTest extends KernelTestCase
 {
-    private AbstractProduct $testProduct;
+    private AbstractObject $testObject;
 
     protected function setUp(): void
     {
-        $this->testProduct = new class() extends AbstractProduct {
+        $this->testObject = new class() extends AbstractObject {
             public function getId(): int
             {
                 return 1;
@@ -37,7 +37,7 @@ class SlackMessageModelTest extends KernelTestCase
      */
     public function testHeader(): void
     {
-        $slackMessage = new SlackMessageModel($this->testProduct, ['name'], '');
+        $slackMessage = new SlackMessageModel($this->testObject, ['name'], '');
         $chatMessage = $slackMessage->create();
 
         if (is_null($chatMessage->getOptions())) {
@@ -54,7 +54,7 @@ class SlackMessageModelTest extends KernelTestCase
      */
     public function testSection(array $fields, string $additionalInfo, array $expected, string $expectedAdditionalInfo): void
     {
-        $slackMessage = new SlackMessageModel($this->testProduct, $fields, $additionalInfo);
+        $slackMessage = new SlackMessageModel($this->testObject, $fields, $additionalInfo);
         $chatMessage = $slackMessage->create();
 
         if (is_null($chatMessage->getOptions())) {
@@ -86,7 +86,7 @@ class SlackMessageModelTest extends KernelTestCase
      */
     public function testTransport(): void
     {
-        $slackMessage = new SlackMessageModel($this->testProduct, ['name'], '');
+        $slackMessage = new SlackMessageModel($this->testObject, ['name'], '');
         $chatMessage = $slackMessage->create();
         $this->assertEquals('slack', $chatMessage->getTransport());
     }

@@ -5,20 +5,16 @@ declare(strict_types=1);
 namespace LemonMind\MessageBundle\Tests;
 
 use LemonMind\MessageBundle\Model\DiscordMessageModel;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Test\KernelTestCase;
 
 class DiscordMessageModelTest extends KernelTestCase
 {
-    /**
-     * @var AbstractObject
-     */
-    private $testProduct;
+    private AbstractObject $testObject;
 
     protected function setUp(): void
     {
-        $this->testProduct = new class() extends AbstractProduct {
+        $this->testObject = new class() extends AbstractObject {
             public function getId(): int
             {
                 return 1;
@@ -38,7 +34,7 @@ class DiscordMessageModelTest extends KernelTestCase
 
     public function testTitle(): void
     {
-        $discordMessage = new DiscordMessageModel($this->testProduct, [], '');
+        $discordMessage = new DiscordMessageModel($this->testObject, [], '');
         $options = $discordMessage->create()->getOptions();
 
         if (!is_null($options)) {
@@ -56,7 +52,7 @@ class DiscordMessageModelTest extends KernelTestCase
      */
     public function testEmbedFields(array $fields, string $additionalInfo, string $expected): void
     {
-        $discordMessage = new DiscordMessageModel($this->testProduct, $fields, $additionalInfo);
+        $discordMessage = new DiscordMessageModel($this->testObject, $fields, $additionalInfo);
 
         if (!$fields) {
             $this->assertEquals($expected, $additionalInfo);
@@ -95,9 +91,4 @@ class DiscordMessageModelTest extends KernelTestCase
             [['name', 'price'], 'lorem', 'name;20;lorem'],
         ];
     }
-
-    // protected function tearDown(): void
-    // {
-    //     $this->testProduct = null;
-    // }
 }

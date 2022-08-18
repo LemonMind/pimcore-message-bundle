@@ -5,19 +5,16 @@ declare(strict_types=1);
 namespace LemonMind\MessageBundle\Tests;
 
 use LemonMind\MessageBundle\Model\SmsMessageModel;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Test\KernelTestCase;
 
 class SmsMessageModelTest extends KernelTestCase
 {
-    /**
-     * @var AbstractProduct
-     */
-    private $testProduct;
+    private AbstractObject $testObject;
 
     protected function setUp(): void
     {
-        $this->testProduct = new class() extends AbstractProduct {
+        $this->testObject = new class() extends AbstractObject {
             public function getId(): int
             {
                 return 1;
@@ -41,7 +38,7 @@ class SmsMessageModelTest extends KernelTestCase
      */
     public function testSmsBody(array $fields, string $additionalInfo, string $smsTo, string $expected): void
     {
-        $smsMessage = new SmsMessageModel($this->testProduct, $fields, $additionalInfo, $smsTo);
+        $smsMessage = new SmsMessageModel($this->testObject, $fields, $additionalInfo, $smsTo);
         $options = $smsMessage->create();
 
         $this->assertEquals($expected, $options->getSubject());
@@ -53,7 +50,7 @@ class SmsMessageModelTest extends KernelTestCase
      */
     public function testSmsPhone(array $fields, string $additionalInfo, string $smsTo, string $expected): void
     {
-        $smsMessage = new SmsMessageModel($this->testProduct, $fields, $additionalInfo, $smsTo);
+        $smsMessage = new SmsMessageModel($this->testObject, $fields, $additionalInfo, $smsTo);
         $options = $smsMessage->create();
 
         $this->assertEquals("+$smsTo", $options->getPhone());
@@ -71,9 +68,4 @@ class SmsMessageModelTest extends KernelTestCase
             [['name', 'price'], 'lorem', '123456789', 'Object id: 1 name: name price: 20 Additional information: lorem'],
         ];
     }
-
-    // protected function tearDown(): void
-    // {
-    //     $this->testProduct = null;
-    // }
 }
