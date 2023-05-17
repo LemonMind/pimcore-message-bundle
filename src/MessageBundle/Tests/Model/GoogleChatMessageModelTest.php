@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LemonMind\MessageBundle\Tests;
 
+use Exception;
 use LemonMind\MessageBundle\Model\GoogleChatMessageModel;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
 use Pimcore\Test\KernelTestCase;
@@ -46,7 +47,7 @@ class GoogleChatMessageModelTest extends KernelTestCase
         if (!is_null($options)) {
             $options = $options->toArray();
         } else {
-            throw new \Exception('options is null');
+            throw new Exception('options is null');
         }
 
         $header = $options['cards'][0]['header'];
@@ -55,6 +56,7 @@ class GoogleChatMessageModelTest extends KernelTestCase
 
     /**
      * @test
+     *
      * @dataProvider dataProvider
      */
     public function testAdditionalInfoWidget(array $fields, string $additionalInfo, array $expected): void
@@ -65,7 +67,7 @@ class GoogleChatMessageModelTest extends KernelTestCase
         if (!is_null($options)) {
             $options = $options->toArray();
         } else {
-            throw new \Exception('options is null');
+            throw new Exception('options is null');
         }
 
         if ('' === $additionalInfo) {
@@ -86,6 +88,7 @@ class GoogleChatMessageModelTest extends KernelTestCase
 
     /**
      * @test
+     *
      * @dataProvider dataProvider
      */
     public function testDataWidget(array $fields, string $additionalInfo, array $expected): void
@@ -96,7 +99,7 @@ class GoogleChatMessageModelTest extends KernelTestCase
         if (!is_null($options)) {
             $options = $options->toArray();
         } else {
-            throw new \Exception('options is null');
+            throw new Exception('options is null');
         }
 
         $dataWidget = $options['cards'][0]['sections'][0]['widgets'];

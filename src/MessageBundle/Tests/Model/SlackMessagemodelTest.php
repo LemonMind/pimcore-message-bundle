@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LemonMind\MessageBundle\Tests\Model;
 
 use App\Model\Product\AbstractProduct;
+use Exception;
 use LemonMind\MessageBundle\Model\SlackMessageModel;
 use Pimcore\Test\KernelTestCase;
 
@@ -41,7 +42,7 @@ class SlackMessageModelTest extends KernelTestCase
         $chatMessage = $slackMessage->create();
 
         if (is_null($chatMessage->getOptions())) {
-            throw new \Exception('options is null');
+            throw new Exception('options is null');
         }
         $messageArray = $chatMessage->getOptions()->toArray();
         $this->assertEquals('header', $messageArray['blocks'][0]['type']);
@@ -50,6 +51,7 @@ class SlackMessageModelTest extends KernelTestCase
 
     /**
      * @test
+     *
      * @dataProvider dataProvider
      */
     public function testSection(array $fields, string $additionalInfo, array $expected, string $expectedAdditionalInfo): void
@@ -58,7 +60,7 @@ class SlackMessageModelTest extends KernelTestCase
         $chatMessage = $slackMessage->create();
 
         if (is_null($chatMessage->getOptions())) {
-            throw new \Exception('options is null');
+            throw new Exception('options is null');
         }
         $messageArray = $chatMessage->getOptions()->toArray();
 

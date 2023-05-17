@@ -34,6 +34,7 @@ class TelegramMessageModelTest extends KernelTestCase
 
     /**
      * @test
+     *
      * @dataProvider dataProvider
      */
     public function testCreate(array $fields, string $additionalInfo, string $expected): void

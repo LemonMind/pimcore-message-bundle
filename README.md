@@ -23,7 +23,12 @@ Then you can install and enable the bundle
 
 ```
 composer require lemonmind/pimcore-message-bundle
-bin/console pimcore:bundle:enable LemonmindMessageBundle
+```
+
+```php
+// config/bundles.php
+
+LemonmindMessageBundle::class => ['all' => true]
 ```
 
 And finally in your config/config.yaml file you need to add

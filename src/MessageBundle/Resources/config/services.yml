@@ -15,3 +15,13 @@ services:
         calls:
             -   setTexter: [ '@?texter' ]
             -   setChatter: [ '@?chatter' ]
+
+    #
+    # SETTINGS
+    #
+    LemonMind\MessageBundle\Settings\:
+        resource: '../../Settings/*'
+        lazy: true
+
+    LemonMind\MessageBundle\Settings\MessageSettings:
+        arguments: [ '@parameter_bag' ]

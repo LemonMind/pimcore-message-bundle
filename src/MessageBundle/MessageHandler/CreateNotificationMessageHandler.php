@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LemonMind\MessageBundle\MessageHandler;
 
+use Exception;
 use LemonMind\MessageBundle\Message\CreateNotification;
 use LemonMind\MessageBundle\Model\AbstractMessageModel;
 use LemonMind\MessageBundle\Model\EmailMessageModel;
@@ -58,7 +59,7 @@ class CreateNotificationMessageHandler implements MessageHandlerInterface
 
             case 'email':
                 if (!isset($config[$createMessage->getClass()]['email_to_send'])) {
-                    throw new \Exception('email_to_send must be defined in lemonmind_message config for class ' . $createMessage->getClass());
+                    throw new Exception('email_to_send must be defined in lemonmind_message config for class ' . $createMessage->getClass());
                 }
 
                 $emailTo = $config[$createMessage->getClass()]['email_to_send'];
@@ -68,7 +69,7 @@ class CreateNotificationMessageHandler implements MessageHandlerInterface
                 break;
             case 'sms':
                 if (!isset($config[$createMessage->getClass()]['sms_to'])) {
-                    throw new \Exception('sms_to must be defined in lemonmind_message config for class ' . $createMessage->getClass());
+                    throw new Exception('sms_to must be defined in lemonmind_message config for class ' . $createMessage->getClass());
                 }
 
                 $smsTo = (string) $config[$createMessage->getClass()]['sms_to'];
@@ -78,14 +79,14 @@ class CreateNotificationMessageHandler implements MessageHandlerInterface
 
                 break;
             default:
-                throw new \Exception('No matching chatter');
+                throw new Exception('No matching chatter');
         }
     }
 
     public function sendMessage(AbstractMessageModel $message, ?ChatterInterface $chatter): void
     {
         if (is_null($chatter)) {
-            throw new \Exception('Error getting chatter');
+            throw new Exception('Error getting chatter');
         }
 
         try {
@@ -99,7 +100,7 @@ class CreateNotificationMessageHandler implements MessageHandlerInterface
         try {
             $mail = new Mail();
             $mail->to($emailTo);
-            $mail->setSubject($message->subject());
+            $mail->subject($message->subject());
             $mail->html($message->body());
             $mail->send();
         } catch (TransportExceptionInterface $e) {
@@ -109,7 +110,7 @@ class CreateNotificationMessageHandler implements MessageHandlerInterface
     public function sms(SmsMessageModel $message, ?TexterInterface $texter): void
     {
         if (is_null($texter)) {
-            throw new \Exception('Error getting texter');
+            throw new Exception('Error getting texter');
         }
 
         try {

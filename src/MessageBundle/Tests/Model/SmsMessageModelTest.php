@@ -37,6 +37,7 @@ class SmsMessageModelTest extends KernelTestCase
 
     /**
      * @test
+     *
      * @dataProvider dataProvider
      */
     public function testSmsBody(array $fields, string $additionalInfo, string $smsTo, string $expected): void
@@ -49,6 +50,7 @@ class SmsMessageModelTest extends KernelTestCase
 
     /**
      * @test
+     *
      * @dataProvider dataProvider
      */
     public function testSmsPhone(array $fields, string $additionalInfo, string $smsTo, string $expected): void
