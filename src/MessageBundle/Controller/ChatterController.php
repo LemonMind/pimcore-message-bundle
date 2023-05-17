@@ -6,9 +6,10 @@ namespace LemonMind\MessageBundle\Controller;
 
 use Exception;
 use LemonMind\MessageBundle\Message\CreateNotification;
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use LemonMind\MessageBundle\Settings\MessageSettings;
+use Pimcore;
+use Pimcore\Controller\FrontendController;
 use Pimcore\Model\DataObject\AbstractObject;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -17,14 +18,14 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/admin/chatter")
  */
-class ChatterController extends AdminController
+class ChatterController extends FrontendController
 {
     /**
      * @Route("/send-notification/{id}", requirements={"id"="\d+"}))
      */
-    public function indexAction(Request $request, int $id, ContainerInterface $container, MessageBusInterface $bus): Response
+    public function indexAction(Request $request, int $id, MessageSettings $messageSettings, MessageBusInterface $bus): Response
     {
-        \Pimcore::unsetAdminMode();
+        Pimcore::unsetAdminMode();
 
         $class = $request->get('classToSend');
 
@@ -38,13 +39,10 @@ class ChatterController extends AdminController
             return $this->returnAction(false, 'Product is not an instance of AbstractObject');
         }
         $product::setGetInheritedValues(true);
-        $config = $container->getParameter('lemonmind_message');
-
-        $fields = explode(',', $config[$class]['fields_to_send']);
         $additionalInfo = $request->get('additionalInfo');
 
         try {
-            $bus->dispatch(new CreateNotification($request->get('chatter'), $id, $class, $fields, $additionalInfo, $config));
+            $bus->dispatch(new CreateNotification($request->get('chatter'), $id, $class, $messageSettings->getFields($class), $additionalInfo, $messageSettings->getConfig()));
         } catch (Exception $e) {
             return $this->returnAction(false, $e->getMessage());
         }
@@ -55,10 +53,10 @@ class ChatterController extends AdminController
     /**
      * @Route("/class")
      */
-    public function classAction(ContainerInterface $container): Response
+    public function classAction(MessageSettings $messageSettings): Response
     {
         $classes = [];
-        $config = $container->getParameter('lemonmind_message');
+        $config = $messageSettings->getConfig();
 
         foreach ($config as $key => $value) {
             if ('allowed_chatters' === $key) {

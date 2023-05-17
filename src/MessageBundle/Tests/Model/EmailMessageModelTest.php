@@ -43,6 +43,7 @@ class EmailMessageModelTest extends KernelTestCase
 
     /**
      * @test
+     *
      * @dataProvider dataProvider
      */
     public function testBody(array $fields, string $additionalInfo, string $expected): void

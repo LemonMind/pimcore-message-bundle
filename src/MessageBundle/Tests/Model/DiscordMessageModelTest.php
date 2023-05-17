@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LemonMind\MessageBundle\Tests;
 
+use Exception;
 use LemonMind\MessageBundle\Model\DiscordMessageModel;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
 use Pimcore\Model\DataObject\AbstractObject;
@@ -44,7 +45,7 @@ class DiscordMessageModelTest extends KernelTestCase
         if (!is_null($options)) {
             $options = $options->toArray();
         } else {
-            throw new \Exception('options is null');
+            throw new Exception('options is null');
         }
 
         $this->assertEquals('Object id 1', $options['embeds'][0]['title']);
@@ -52,6 +53,7 @@ class DiscordMessageModelTest extends KernelTestCase
 
     /**
      * @test
+     *
      * @dataProvider dataProvider
      */
     public function testEmbedFields(array $fields, string $additionalInfo, string $expected): void
@@ -69,7 +71,7 @@ class DiscordMessageModelTest extends KernelTestCase
         if (!is_null($options)) {
             $options = $options->toArray();
         } else {
-            throw new \Exception('options is null');
+            throw new Exception('options is null');
         }
 
         $actualFields = $options['embeds'][0]['fields'];
