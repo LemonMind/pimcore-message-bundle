@@ -22,7 +22,8 @@
     "symfony/discord-notifier": "^6.2.8",
     "symfony/smsapi-notifier": "^6.2.7",
     "symfony/google-chat-notifier": "^6.2.8",
-    "symfony/telegram-notifier": "^6.2.8"
+    "symfony/telegram-notifier": "^6.2.8",
+    "pimcore/admin-ui-classic-bundle": "^1.0"
   },
   "require-dev": {
     "phpstan/phpstan": "^1.10",
